@@ -5,6 +5,8 @@ compatibility_flags = ["nodejs_compat"]
 
 [vars]
 ENVIRONMENT = "development"
+# 注意：JWT_SECRET 应该使用 secrets 而不是 vars
+# 使用命令: wrangler secret put JWT_SECRET
 
 [[d1_databases]]
 binding = "DB"

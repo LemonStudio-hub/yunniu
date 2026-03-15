@@ -1,6 +1,9 @@
 import { Hono } from 'hono'
-import { cors } from 'hono/cors'
 import type { Env } from './types'
+import { initJWT } from './utils/jwt'
+import { corsMiddleware } from './middleware/cors'
+import { normalRateLimit } from './middleware/rateLimit'
+import { handleError, formatErrorResponse, logError } from './utils/errorHandler'
 import authRouter from './routes/auth'
 import postsRouter from './routes/posts'
 import commentsRouter from './routes/comments'
@@ -8,12 +11,25 @@ import categoriesRouter from './routes/categories'
 
 const app = new Hono<{ Bindings: Env }>()
 
-app.use('*', cors({
-  origin: '*',
-  allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-}))
+// Set global environment
+app.use('*', async (c, next) => {
+  if (c.env.ENVIRONMENT) {
+    ;(globalThis as any).ENVIRONMENT = c.env.ENVIRONMENT
+  }
+  await next()
+})
+
+// Initialize JWT with environment variable
+app.use('*', async (c, next) => {
+  if (!c.env.JWT_SECRET) {
+    throw new Error('JWT_SECRET environment variable is not set')
+  }
+  initJWT(c.env.JWT_SECRET)
+  await next()
+})
+
+app.use('*', normalRateLimit)
+app.use('*', corsMiddleware)
 
 app.get('/', (c) => {
   return c.json({
@@ -33,12 +49,15 @@ app.route('/api/comments', commentsRouter)
 app.route('/api/categories', categoriesRouter)
 
 app.notFound((c) => {
-  return c.json({ error: 'Not Found' }, 404)
+  const error = handleError(new Error('Not Found'))
+  return c.json(formatErrorResponse(error), 404)
 })
 
 app.onError((err, c) => {
-  console.error('Error:', err)
-  return c.json({ error: 'Internal Server Error' }, 500)
+  logError(err, 'Global Error Handler')
+  const error = handleError(err)
+  const statusCode = err instanceof Error && 'statusCode' in err ? (err as any).statusCode : 500
+  return c.json(formatErrorResponse(error), statusCode)
 })
 
 export default app
