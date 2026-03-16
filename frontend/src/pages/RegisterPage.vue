@@ -1,68 +1,87 @@
 <template>
-  <div class="max-w-md mx-auto">
-    <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-8">
-      <h1 class="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center">注册</h1>
+  <div class="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
+    <div class="w-full max-w-md">
+      <div class="card-base p-8 sm:p-10 relative overflow-hidden">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-secondary-400/20 to-accent-400/20 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-primary-400/20 to-secondary-400/20 rounded-full blur-3xl"></div>
 
-      <form @submit.prevent="handleSubmit" class="space-y-4">
-        <div>
-          <label for="username" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            用户名
-          </label>
-          <input
-            id="username"
-            v-model="username"
-            type="text"
-            required
-            minlength="3"
-            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            placeholder="请输入用户名"
-          />
+        <div class="relative">
+          <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl shadow-lg shadow-primary-500/25 mb-4">
+              <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <h1 class="text-3xl font-display font-bold text-gradient mb-2">创建账户</h1>
+            <p class="text-sm text-gray-500 dark:text-gray-400">加入云纽社区，开始分享</p>
+          </div>
+
+          <form @submit.prevent="handleSubmit" class="space-y-5">
+            <div>
+              <label for="username" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                用户名
+              </label>
+              <input
+                id="username"
+                v-model="username"
+                type="text"
+                required
+                minlength="3"
+                class="input-base"
+                placeholder="请输入用户名"
+              />
+            </div>
+
+            <div>
+              <label for="email" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                邮箱地址
+              </label>
+              <input
+                id="email"
+                v-model="email"
+                type="email"
+                required
+                class="input-base"
+                placeholder="your@email.com"
+              />
+            </div>
+
+            <div>
+              <label for="password" class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+                密码
+              </label>
+              <input
+                id="password"
+                v-model="password"
+                type="password"
+                required
+                minlength="8"
+                class="input-base"
+                placeholder="至少 8 个字符"
+              />
+            </div>
+
+            <button
+              type="submit"
+              :disabled="loading"
+              class="w-full btn-primary text-base py-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-lg"
+            >
+              <svg v-if="loading" class="animate-spin -ml-1 mr-2 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              {{ loading ? '注册中...' : '注册' }}
+            </button>
+          </form>
+
+          <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
+            已有账号？
+            <router-link to="/login" class="text-primary-500 hover:text-primary-600 font-semibold transition-colors">
+              立即登录
+            </router-link>
+          </p>
         </div>
-
-        <div>
-          <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            邮箱
-          </label>
-          <input
-            id="email"
-            v-model="email"
-            type="email"
-            required
-            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            placeholder="your@email.com"
-          />
-        </div>
-
-        <div>
-          <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            密码
-          </label>
-          <input
-            id="password"
-            v-model="password"
-            type="password"
-            required
-            minlength="6"
-            class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-            placeholder="••••••••"
-          />
-        </div>
-
-        <button
-          type="submit"
-          :disabled="loading"
-          class="w-full px-4 py-2 text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {{ loading ? '注册中...' : '注册' }}
-        </button>
-      </form>
-
-      <p class="mt-4 text-center text-sm text-gray-600 dark:text-gray-400">
-        已有账号？
-        <router-link to="/login" class="text-primary-500 hover:text-primary-600 font-medium">
-          立即登录
-        </router-link>
-      </p>
+      </div>
     </div>
   </div>
 </template>

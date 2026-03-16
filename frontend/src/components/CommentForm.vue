@@ -1,17 +1,26 @@
 <template>
-  <form @submit.prevent="handleSubmit" class="mb-6">
-    <textarea
-      v-model="content"
-      placeholder="写下你的评论..."
-      rows="3"
-      class="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white placeholder-gray-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
-    ></textarea>
-    <div class="flex justify-end mt-2">
+  <form @submit.prevent="handleSubmit" class="mb-8">
+    <div class="relative">
+      <textarea
+        v-model="content"
+        placeholder="写下你的评论..."
+        rows="4"
+        class="input-base resize-none focus:ring-4 focus:ring-primary-500/10"
+      ></textarea>
+      <div class="absolute bottom-3 right-3 text-xs text-gray-400">
+        {{ content.length }} / 500
+      </div>
+    </div>
+    <div class="flex justify-end mt-3">
       <button
         type="submit"
         :disabled="!content.trim() || submitting"
-        class="px-4 py-2 text-sm font-medium text-white bg-primary-500 hover:bg-primary-600 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        class="btn-primary disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-lg"
       >
+        <svg v-if="submitting" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
         {{ submitting ? '提交中...' : '发表评论' }}
       </button>
     </div>
