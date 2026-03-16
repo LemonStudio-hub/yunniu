@@ -41,6 +41,9 @@ coverage/
 *.tmp
 .cache/
 
+# Wrangler
+.wrangler/
+
 # OS files
 Thumbs.db
 Desktop.ini
