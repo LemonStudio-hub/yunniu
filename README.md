@@ -166,7 +166,7 @@ VITE_API_BASE_URL=http://localhost:8787
 创建 `frontend/.env.production`：
 
 ```env
-VITE_API_BASE_URL=https://cloudlink-backend.lemonhub.workers.dev
+VITE_API_BASE_URL=https://api.winuel.com
 ```
 
 #### 后端环境变量

@@ -145,8 +145,8 @@ wrangler deploy --env preview
 
 ```bash
 # 测试 API
-curl https://cloudlink-backend.lemonhub.workers.dev/
-curl https://cloudlink-backend.lemonhub.workers.dev/health
+curl https://api.winuel.com/
+curl https://api.winuel.com/health
 ```
 
 ## Cloudflare Pages 部署
@@ -195,7 +195,7 @@ root_directory: frontend
 在 Pages 设置中添加环境变量：
 
 ```env
-VITE_API_BASE_URL=https://cloudlink-backend.lemonhub.workers.dev
+VITE_API_BASE_URL=https://api.winuel.com
 ```
 
 #### 4. 部署
@@ -268,7 +268,7 @@ wrangler d1 export cloudlink-db --remote --output=backup_${DATE}.sql
 
 | 变量名 | 说明 | 必需 | 示例 |
 |--------|------|------|------|
-| VITE_API_BASE_URL | 后端 API 地址 | 是 | `https://cloudlink-backend.lemonhub.workers.dev` |
+| VITE_API_BASE_URL | 后端 API 地址 | 是 | `https://api.winuel.com` |
 
 ### 设置环境变量
 
@@ -473,10 +473,10 @@ wrangler tail --format pretty --tail 100
 
 ```bash
 # 测试健康检查
-curl https://cloudlink-backend.lemonhub.workers.dev/health
+curl https://api.winuel.com/health
 
 # 测试 API 端点
-curl https://cloudlink-backend.lemonhub.workers.dev/api/categories
+curl https://api.winuel.com/api/categories
 ```
 
 ## 维护指南

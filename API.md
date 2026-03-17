@@ -25,7 +25,7 @@
 ### 基础 URL
 
 - **开发环境**：`http://localhost:8787`
-- **生产环境**：`https://cloudlink-backend.lemonhub.workers.dev`
+- **生产环境**：`https://api.winuel.com`
 
 ## 基础信息
 
@@ -721,7 +721,7 @@ interface Category {
 #### 用户注册
 
 ```bash
-curl -X POST https://cloudlink-backend.lemonhub.workers.dev/api/auth/register \
+curl -X POST https://api.winuel.com/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "username": "testuser",
@@ -733,7 +733,7 @@ curl -X POST https://cloudlink-backend.lemonhub.workers.dev/api/auth/register \
 #### 用户登录
 
 ```bash
-curl -X POST https://cloudlink-backend.lemonhub.workers.dev/api/auth/login \
+curl -X POST https://api.winuel.com/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "test@example.com",
@@ -744,13 +744,13 @@ curl -X POST https://cloudlink-backend.lemonhub.workers.dev/api/auth/login \
 #### 获取帖子列表
 
 ```bash
-curl -X GET "https://cloudlink-backend.lemonhub.workers.dev/api/posts?page=1&limit=20"
+curl -X GET "https://api.winuel.com/api/posts?page=1&limit=20"
 ```
 
 #### 创建帖子
 
 ```bash
-curl -X POST https://cloudlink-backend.lemonhub.workers.dev/api/posts \
+curl -X POST https://api.winuel.com/api/posts \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer <your-token>" \
   -d '{
@@ -766,13 +766,13 @@ curl -X POST https://cloudlink-backend.lemonhub.workers.dev/api/posts \
 ```javascript
 // 使用 fetch API
 async function getPosts() {
-  const response = await fetch('https://cloudlink-backend.lemonhub.workers.dev/api/posts');
+  const response = await fetch('https://api.winuel.com/api/posts');
   const data = await response.json();
   return data;
 }
 
 async function createPost(token, postData) {
-  const response = await fetch('https://cloudlink-backend.lemonhub.workers.dev/api/posts', {
+  const response = await fetch('https://api.winuel.com/api/posts', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -791,7 +791,7 @@ async function createPost(token, postData) {
 import requests
 
 # 获取帖子列表
-response = requests.get('https://cloudlink-backend.lemonhub.workers.dev/api/posts')
+response = requests.get('https://api.winuel.com/api/posts')
 posts = response.json()
 
 # 创建帖子
@@ -807,7 +807,7 @@ data = {
     'tags': ['vue', 'typescript']
 }
 response = requests.post(
-    'https://cloudlink-backend.lemonhub.workers.dev/api/posts',
+    'https://api.winuel.com/api/posts',
     headers=headers,
     json=data
 )

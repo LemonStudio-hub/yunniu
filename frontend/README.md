@@ -155,7 +155,7 @@ VITE_API_BASE_URL=http://localhost:8787
 ### 生产环境变量 (.env.production)
 
 ```env
-VITE_API_BASE_URL=https://cloudlink-backend.lemonhub.workers.dev
+VITE_API_BASE_URL=https://api.winuel.com
 ```
 
 ### 使用环境变量
