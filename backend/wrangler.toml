@@ -22,3 +22,8 @@ database_id = "8ede8043-e500-4893-a93d-58c2d1048f1a"
 binding = "KV"
 id = "6c15505889704c9f9f9e148394b6f0ec"
 preview_id = "96179db79b6d4b5b9c0b899977a2c942"
+
+# 自定义域名配置
+[[routes]]
+pattern = "api.winuel.com/*"
+zone_name = "winuel.com"
