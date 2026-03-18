@@ -10,6 +10,7 @@ import authRouter from './routes/auth'
 import postsRouter from './routes/posts'
 import commentsRouter from './routes/comments'
 import categoriesRouter from './routes/categories'
+import notificationsRouter from './routes/notifications'
 
 // 初始化一次性邮箱检查器
 initEmailChecker(
@@ -49,6 +50,7 @@ app.route('/api/auth', authRouter)
 app.route('/api/posts', postsRouter)
 app.route('/api/comments', commentsRouter)
 app.route('/api/categories', categoriesRouter)
+app.route('/api/notifications', notificationsRouter)
 
 app.notFound((c) => {
   const error = handleError(new Error('Not Found'))

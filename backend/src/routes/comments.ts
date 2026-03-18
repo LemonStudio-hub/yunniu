@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import type { Env, Variables } from '../types'
 import { PostService } from '../services/postService'
+import { NotificationService } from '../services/notificationService'
 import { authMiddleware } from '../middleware/auth'
 
 const commentsRouter = new Hono<{ Bindings: Env; Variables: Variables }>()
@@ -15,6 +16,8 @@ commentsRouter.post('/', authMiddleware, async (c) => {
     }
 
     const postService = new PostService(c.env.DB)
+    const notificationService = new NotificationService(c.env.DB)
+
     const comment = await postService.createComment({
       post_id: postId,
       author_id: user.userId,
@@ -25,6 +28,40 @@ commentsRouter.post('/', authMiddleware, async (c) => {
     const author = await c.env.DB.prepare('SELECT id, username, avatar FROM users WHERE id = ?')
       .bind(comment.author_id)
       .first()
+
+    let notifyUserId = null
+    let notifyType = 'comment'
+    let notifyTitle = '新评论通知'
+    let notifyMessage = ''
+    let notifyLink = `/posts/${postId}`
+
+    if (parentId) {
+      const parentComment = await postService.findCommentById(parentId)
+      if (parentComment && parentComment.author_id !== user.userId) {
+        notifyUserId = parentComment.author_id
+        notifyType = 'reply'
+        notifyTitle = '新回复通知'
+        notifyMessage = `${author?.username || '用户'} 回复了你的评论`
+      }
+    } else {
+      const post = await postService.findById(postId)
+      if (post && post.author_id !== user.userId) {
+        notifyUserId = post.author_id
+        notifyType = 'comment'
+        notifyTitle = '新评论通知'
+        notifyMessage = `${author?.username || '用户'} 评论了你的帖子`
+      }
+    }
+
+    if (notifyUserId) {
+      await notificationService.create({
+        user_id: notifyUserId,
+        type: notifyType,
+        title: notifyTitle,
+        message: notifyMessage,
+        link: notifyLink,
+      })
+    }
 
     return c.json({
       ...comment,
@@ -104,7 +141,28 @@ commentsRouter.post('/:id/like', authMiddleware, async (c) => {
       .run()
 
     const postService = new PostService(c.env.DB)
+    const notificationService = new NotificationService(c.env.DB)
+
     await postService.incrementCommentLikeCount(id)
+
+    const comment = await postService.findCommentById(id)
+    if (comment && comment.author_id !== user.userId) {
+      const currentUser = await c.env.DB.prepare('SELECT username FROM users WHERE id = ?')
+        .bind(user.userId)
+        .first<{ username: string }>()
+
+      const post = await postService.findById(comment.post_id)
+
+      if (post && currentUser) {
+        await notificationService.create({
+          user_id: comment.author_id,
+          type: 'like',
+          title: '点赞通知',
+          message: `${currentUser.username} 点赞了你的评论`,
+          link: `/posts/${comment.post_id}`,
+        })
+      }
+    }
 
     return c.json({ message: '点赞成功' })
   } catch (error: any) {

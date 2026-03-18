@@ -1,0 +1,111 @@
+2026-03-17T16:13:29.316786Z	Cloning repository...
+2026-03-17T16:13:30.351796Z	From https://github.com/LemonStudio-hub/yunniu
+2026-03-17T16:13:30.352194Z	 * branch            1466c0a3160a1e97fefbcf1a8c2e5ce7c0ca416f -> FETCH_HEAD
+2026-03-17T16:13:30.352284Z	
+2026-03-17T16:13:30.383446Z	HEAD is now at 1466c0a trigger: 触发 Cloudflare Pages 重新部署以应用 API URL 更新
+2026-03-17T16:13:30.384291Z	
+2026-03-17T16:13:31.409257Z	
+2026-03-17T16:13:31.409674Z	Using v2 root directory strategy
+2026-03-17T16:13:31.426126Z	Success: Finished cloning repository files
+2026-03-17T16:13:33.567889Z	Checking for configuration in a Wrangler configuration file (BETA)
+2026-03-17T16:13:33.568286Z	
+2026-03-17T16:13:34.685634Z	No Wrangler configuration file found. Continuing.
+2026-03-17T16:13:34.940654Z	Detected the following tools from environment: npm@10.9.2, nodejs@22.16.0
+2026-03-17T16:13:34.941086Z	Installing project dependencies: npm clean-install --progress=false
+2026-03-17T16:13:58.730076Z	
+2026-03-17T16:13:58.730913Z	added 331 packages, and audited 334 packages in 22s
+2026-03-17T16:13:58.731017Z	
+2026-03-17T16:13:58.731069Z	92 packages are looking for funding
+2026-03-17T16:13:58.731102Z	  run `npm fund` for details
+2026-03-17T16:13:58.782677Z	
+2026-03-17T16:13:58.782965Z	3 high severity vulnerabilities
+2026-03-17T16:13:58.783036Z	
+2026-03-17T16:13:58.783074Z	To address all issues (including breaking changes), run:
+2026-03-17T16:13:58.783113Z	  npm audit fix --force
+2026-03-17T16:13:58.783145Z	
+2026-03-17T16:13:58.783179Z	Run `npm audit` for details.
+2026-03-17T16:13:59.587071Z	Executing user command: npm run build
+2026-03-17T16:13:59.812616Z	
+2026-03-17T16:13:59.812858Z	> cloudlink@1.0.0 build
+2026-03-17T16:13:59.812907Z	> npm run build:backend && npm run build:frontend
+2026-03-17T16:13:59.812944Z	
+2026-03-17T16:13:59.980028Z	
+2026-03-17T16:13:59.981236Z	> cloudlink@1.0.0 build:backend
+2026-03-17T16:13:59.98179Z	> cd backend && npm run build
+2026-03-17T16:13:59.98194Z	
+2026-03-17T16:14:00.155052Z	
+2026-03-17T16:14:00.155399Z	> cloudlink-backend@1.0.0 build
+2026-03-17T16:14:00.155825Z	> npm run generate:blocklist && tsc
+2026-03-17T16:14:00.156778Z	
+2026-03-17T16:14:00.392698Z	
+2026-03-17T16:14:00.392951Z	> cloudlink-backend@1.0.0 generate:blocklist
+2026-03-17T16:14:00.393023Z	> tsx scripts/generateBlocklist.ts
+2026-03-17T16:14:00.393117Z	
+2026-03-17T16:14:00.784226Z	Allowlist file not found, using empty allowlist
+2026-03-17T16:14:00.785183Z	✅ Blacklist generated successfully!
+2026-03-17T16:14:00.78534Z	   - Blocklist: 5334 domains
+2026-03-17T16:14:00.785406Z	   - Allowlist: 0 domains
+2026-03-17T16:14:00.785478Z	   - Output: /opt/buildhome/repo/backend/src/data/blocklist.ts
+2026-03-17T16:14:02.745361Z	
+2026-03-17T16:14:02.745722Z	> cloudlink@1.0.0 build:frontend
+2026-03-17T16:14:02.745791Z	> cd frontend && npm run build
+2026-03-17T16:14:02.745848Z	
+2026-03-17T16:14:02.931883Z	
+2026-03-17T16:14:02.932182Z	> cloudlink-frontend@0.0.0 build
+2026-03-17T16:14:02.932342Z	> vue-tsc -b && vite build
+2026-03-17T16:14:02.932543Z	
+2026-03-17T16:14:06.127504Z	file:///opt/buildhome/repo/frontend/node_modules/rolldown/dist/shared/binding-C5G6_6ql.mjs:507
+2026-03-17T16:14:06.127862Z			if (loadErrors.length > 0) throw new Error("Cannot find native binding. npm has a bug related to optional dependencies (https://github.com/npm/cli/issues/4828). Please try `npm i` again after removing both package-lock.json and node_modules directory.", { cause: loadErrors.reduce((err, cur) => {
+2026-03-17T16:14:06.128814Z			                                 ^
+2026-03-17T16:14:06.129006Z	
+2026-03-17T16:14:06.129082Z	Error: Cannot find native binding. npm has a bug related to optional dependencies (https://github.com/npm/cli/issues/4828). Please try `npm i` again after removing both package-lock.json and node_modules directory.
+2026-03-17T16:14:06.129152Z	    at file:///opt/buildhome/repo/frontend/node_modules/rolldown/dist/shared/binding-C5G6_6ql.mjs:507:36
+2026-03-17T16:14:06.129197Z	    at file:///opt/buildhome/repo/frontend/node_modules/rolldown/dist/shared/binding-C5G6_6ql.mjs:9:48
+2026-03-17T16:14:06.129232Z	    at file:///opt/buildhome/repo/frontend/node_modules/rolldown/dist/shared/parse-B3SIKejW.mjs:39:46
+2026-03-17T16:14:06.129263Z	    at ModuleJob.run (node:internal/modules/esm/module_job:274:25)
+2026-03-17T16:14:06.129295Z	    at async onImport.tracePromise.__proto__ (node:internal/modules/esm/loader:644:26)
+2026-03-17T16:14:06.129331Z	    at async CAC.<anonymous> (file:///opt/buildhome/repo/frontend/node_modules/vite/dist/node/cli.js:764:28) {
+2026-03-17T16:14:06.129363Z	  [cause]: Error: Cannot find module '@rolldown/binding-linux-x64-gnu'
+2026-03-17T16:14:06.129396Z	  Require stack:
+2026-03-17T16:14:06.12943Z	  - /opt/buildhome/repo/frontend/node_modules/rolldown/dist/shared/binding-C5G6_6ql.mjs
+2026-03-17T16:14:06.129463Z	      at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+2026-03-17T16:14:06.129493Z	      ... 6 lines matching cause stack trace ...
+2026-03-17T16:14:06.129524Z	      at require (node:internal/modules/helpers:135:16)
+2026-03-17T16:14:06.129567Z	      at requireNative (file:///opt/buildhome/repo/frontend/node_modules/rolldown/dist/shared/binding-C5G6_6ql.mjs:277:21)
+2026-03-17T16:14:06.129658Z	      at file:///opt/buildhome/repo/frontend/node_modules/rolldown/dist/shared/binding-C5G6_6ql.mjs:475:18 {
+2026-03-17T16:14:06.129718Z	    code: 'MODULE_NOT_FOUND',
+2026-03-17T16:14:06.129754Z	    requireStack: [
+2026-03-17T16:14:06.129786Z	      '/opt/buildhome/repo/frontend/node_modules/rolldown/dist/shared/binding-C5G6_6ql.mjs'
+2026-03-17T16:14:06.129817Z	    ],
+2026-03-17T16:14:06.129905Z	    cause: Error: Cannot find module '../rolldown-binding.linux-x64-gnu.node'
+2026-03-17T16:14:06.129983Z	    Require stack:
+2026-03-17T16:14:06.130041Z	    - /opt/buildhome/repo/frontend/node_modules/rolldown/dist/shared/binding-C5G6_6ql.mjs
+2026-03-17T16:14:06.130089Z	        at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+2026-03-17T16:14:06.130123Z	        at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+2026-03-17T16:14:06.13016Z	        at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+2026-03-17T16:14:06.130217Z	        at Function._load (node:internal/modules/cjs/loader:1211:37)
+2026-03-17T16:14:06.130275Z	        at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+2026-03-17T16:14:06.130323Z	        at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+2026-03-17T16:14:06.130362Z	        at Module.require (node:internal/modules/cjs/loader:1487:12)
+2026-03-17T16:14:06.130402Z	        at require (node:internal/modules/helpers:135:16)
+2026-03-17T16:14:06.130441Z	        at requireNative (file:///opt/buildhome/repo/frontend/node_modules/rolldown/dist/shared/binding-C5G6_6ql.mjs:272:12)
+2026-03-17T16:14:06.13048Z	        at file:///opt/buildhome/repo/frontend/node_modules/rolldown/dist/shared/binding-C5G6_6ql.mjs:475:18 {
+2026-03-17T16:14:06.130522Z	      code: 'MODULE_NOT_FOUND',
+2026-03-17T16:14:06.130558Z	      requireStack: [
+2026-03-17T16:14:06.130595Z	        '/opt/buildhome/repo/frontend/node_modules/rolldown/dist/shared/binding-C5G6_6ql.mjs'
+2026-03-17T16:14:06.130637Z	      ]
+2026-03-17T16:14:06.130676Z	    }
+2026-03-17T16:14:06.130711Z	  }
+2026-03-17T16:14:06.130747Z	}
+2026-03-17T16:14:06.130784Z	
+2026-03-17T16:14:06.130818Z	Node.js v22.16.0
+2026-03-17T16:14:06.153016Z	npm error Lifecycle script `build` failed with error:
+2026-03-17T16:14:06.153824Z	npm error code 1
+2026-03-17T16:14:06.154084Z	npm error path /opt/buildhome/repo/frontend
+2026-03-17T16:14:06.15451Z	npm error workspace cloudlink-frontend@0.0.0
+2026-03-17T16:14:06.154588Z	npm error location /opt/buildhome/repo/frontend
+2026-03-17T16:14:06.154653Z	npm error command failed
+2026-03-17T16:14:06.154737Z	npm error command sh -c vue-tsc -b && vite build
+2026-03-17T16:14:06.185963Z	Failed: Error while executing user command. Exited with error code: 1
+2026-03-17T16:14:06.196568Z	Failed: build command exited with code: 1
+2026-03-17T16:14:07.557987Z	Failed: error occurred while running build command

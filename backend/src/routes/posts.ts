@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import type { Env, Variables } from '../types'
 import { PostService } from '../services/postService'
+import { NotificationService } from '../services/notificationService'
 import { authMiddleware } from '../middleware/auth'
 
 const postsRouter = new Hono<{ Bindings: Env; Variables: Variables }>()
@@ -174,7 +175,26 @@ postsRouter.post('/:id/like', authMiddleware, async (c) => {
       .run()
 
     const postService = new PostService(c.env.DB)
+    const notificationService = new NotificationService(c.env.DB)
+
     await postService.incrementLikeCount(id)
+
+    const post = await postService.findById(id)
+    if (post && post.author_id !== user.userId) {
+      const currentUser = await c.env.DB.prepare('SELECT username FROM users WHERE id = ?')
+        .bind(user.userId)
+        .first<{ username: string }>()
+
+      if (currentUser) {
+        await notificationService.create({
+          user_id: post.author_id,
+          type: 'like',
+          title: '点赞通知',
+          message: `${currentUser.username} 点赞了你的帖子`,
+          link: `/posts/${id}`,
+        })
+      }
+    }
 
     return c.json({ message: '点赞成功' })
   } catch (error: any) {
