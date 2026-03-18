@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { Hono } from 'hono'
 import commentsRouter from '../../routes/comments'
 import { createMockD1Database } from '../helpers/db'
-import { initJWT } from '../../utils/jwt'
+import { initJWT, generateToken } from '../../utils/jwt'
 import type { Env, Variables } from '../../types'
 
 describe('Comments Router', () => {
@@ -30,9 +30,10 @@ describe('Comments Router', () => {
     app.route('/api/comments', commentsRouter)
   })
 
-  const createAuthHeader = (userId: string) => {
+  const createAuthHeader = async (userId: string, username: string = 'testuser', role: string = 'user') => {
+    const token = await generateToken({ userId, username, role })
     return {
-      'Authorization': `Bearer ${userId}`,
+      'Authorization': `Bearer ${token}`,
     }
   }
 
@@ -67,11 +68,12 @@ describe('Comments Router', () => {
         content: 'This is a test comment',
       }
 
+      const authHeader = await createAuthHeader('2')
       const res = await app.request('/api/comments', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...createAuthHeader('2'),
+          ...authHeader,
         },
         body: JSON.stringify(commentData),
       })
@@ -86,11 +88,12 @@ describe('Comments Router', () => {
         content: 'This is a test comment',
       }
 
+      const authHeader = await createAuthHeader('1')
       const res = await app.request('/api/comments', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...createAuthHeader('1'),
+          ...authHeader,
         },
         body: JSON.stringify(commentData),
       })
@@ -143,11 +146,12 @@ describe('Comments Router', () => {
         parentId: '1',
       }
 
+      const authHeader = await createAuthHeader('2')
       const res = await app.request('/api/comments', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...createAuthHeader('2'),
+          ...authHeader,
         },
         body: JSON.stringify(commentData),
       })
@@ -178,11 +182,12 @@ describe('Comments Router', () => {
         content: 'Updated comment',
       }
 
+      const authHeader = await createAuthHeader('1')
       const res = await app.request('/api/comments/1', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          ...createAuthHeader('1'),
+          ...authHeader,
         },
         body: JSON.stringify(updateData),
       })
@@ -200,11 +205,12 @@ describe('Comments Router', () => {
         content: 'Updated comment',
       }
 
+      const authHeader = await createAuthHeader('1')
       const res = await app.request('/api/comments/999', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          ...createAuthHeader('1'),
+          ...authHeader,
         },
         body: JSON.stringify(updateData),
       })
@@ -233,11 +239,12 @@ describe('Comments Router', () => {
         content: 'Updated comment',
       }
 
+      const authHeader = await createAuthHeader('1')
       const res = await app.request('/api/comments/1', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          ...createAuthHeader('1'),
+          ...authHeader,
         },
         body: JSON.stringify(updateData),
       })
@@ -264,9 +271,10 @@ describe('Comments Router', () => {
       mockDb.tables = new Map()
       mockDb.tables.set('comments', [mockComment])
 
+      const authHeader = await createAuthHeader('1')
       const res = await app.request('/api/comments/1', {
         method: 'DELETE',
-        headers: createAuthHeader('1'),
+        headers: authHeader,
       })
 
       expect(res.status).toBe(200)
@@ -278,9 +286,10 @@ describe('Comments Router', () => {
       mockDb.tables = new Map()
       mockDb.tables.set('comments', [])
 
+      const authHeader = await createAuthHeader('1')
       const res = await app.request('/api/comments/999', {
         method: 'DELETE',
-        headers: createAuthHeader('1'),
+        headers: authHeader,
       })
 
       expect(res.status).toBe(404)
@@ -303,9 +312,10 @@ describe('Comments Router', () => {
       mockDb.tables = new Map()
       mockDb.tables.set('comments', [mockComment])
 
+      const authHeader = await createAuthHeader('1')
       const res = await app.request('/api/comments/1', {
         method: 'DELETE',
-        headers: createAuthHeader('1'),
+        headers: authHeader,
       })
 
       expect(res.status).toBe(403)
@@ -352,9 +362,10 @@ describe('Comments Router', () => {
       mockDb.tables.set('likes', [])
       mockDb.tables.set('notifications', [])
 
+      const authHeader = await createAuthHeader('1')
       const res = await app.request('/api/comments/1/like', {
         method: 'POST',
-        headers: createAuthHeader('1'),
+        headers: authHeader,
       })
 
       expect(res.status).toBe(200)
@@ -385,9 +396,10 @@ describe('Comments Router', () => {
       mockDb.tables.set('comments', [mockComment])
       mockDb.tables.set('likes', [mockLike])
 
+      const authHeader = await createAuthHeader('1')
       const res = await app.request('/api/comments/1/like', {
         method: 'POST',
-        headers: createAuthHeader('1'),
+        headers: authHeader,
       })
 
       expect(res.status).toBe(400)
@@ -408,9 +420,10 @@ describe('Comments Router', () => {
       mockDb.tables = new Map()
       mockDb.tables.set('likes', [mockLike])
 
+      const authHeader = await createAuthHeader('1')
       const res = await app.request('/api/comments/1/like', {
         method: 'DELETE',
-        headers: createAuthHeader('1'),
+        headers: authHeader,
       })
 
       expect(res.status).toBe(200)

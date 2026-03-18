@@ -3,20 +3,19 @@ import { Hono } from 'hono'
 import categoriesRouter from '../../routes/categories'
 import { createMockD1Database } from '../helpers/db'
 import { initJWT } from '../../utils/jwt'
-import type { Env, Variables } from '../../types'
+import type { Env } from '../../types'
 
 describe('Categories Router', () => {
-  let app: Hono<{ Bindings: Env; Variables: Variables }>
+  let app: Hono<{ Bindings: Env }>
   let mockDb: any
 
   beforeEach(() => {
     mockDb = createMockD1Database()
     initJWT('test-secret-key-32-characters-long-key')
 
-    app = new Hono<{ Bindings: Env; Variables: Variables }>()
-    app.route('/api/categories', categoriesRouter)
+    app = new Hono<{ Bindings: Env }>()
 
-    // Mock the env
+    // Mock the env - must run before route mounting
     app.use('*', async (c, next) => {
       if (!c.env) {
         c.env = {} as Env
@@ -24,6 +23,8 @@ describe('Categories Router', () => {
       c.env.DB = mockDb
       await next()
     })
+
+    app.route('/api/categories', categoriesRouter)
   })
 
   describe('GET /', () => {

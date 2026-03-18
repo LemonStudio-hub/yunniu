@@ -3,27 +3,28 @@ import { Hono } from 'hono'
 import postsRouter from '../../routes/posts'
 import { createMockD1Database } from '../helpers/db'
 import { initJWT, generateToken } from '../../utils/jwt'
+import type { Env, Variables } from '../../types'
 
 describe('Posts Router', () => {
-  let app: Hono
+  let app: Hono<{ Bindings: Env; Variables: Variables }>
   let mockDb: any
 
   beforeEach(() => {
     mockDb = createMockD1Database()
     initJWT('test-secret-key-32-characters-long-key')
 
-    app = new Hono()
+    app = new Hono<{ Bindings: Env; Variables: Variables }>()
     app.use('*', async (c, next) => {
       if (!c.env) {
-        c.env = {}
+        c.env = {} as Env
       }
       c.env.DB = mockDb
       c.env.JWT_SECRET = 'test-secret-key-32-characters-long-key'
       // Mock KV storage
       c.env.KV = {
-        get: async (key: string) => null,
+        get: async (key: string | string[]) => null,
         put: async (key: string, value: string, options?: any) => {},
-      }
+      } as KVNamespace
       await next()
     })
     app.route('/api/posts', postsRouter)
@@ -82,7 +83,7 @@ describe('Posts Router', () => {
       const res = await app.request('/api/posts')
 
       expect(res.status).toBe(200)
-      const json = await res.json()
+      const json = await res.json() as { posts: any[] }
       expect(json.posts).toHaveLength(2)
     })
 
@@ -93,7 +94,7 @@ describe('Posts Router', () => {
       const res = await app.request('/api/posts')
 
       expect(res.status).toBe(200)
-      const json = await res.json()
+      const json = await res.json() as { posts: any[]; total: number }
       expect(json.posts).toEqual([])
       expect(json.total).toBe(0)
     })
@@ -127,7 +128,7 @@ describe('Posts Router', () => {
       const res = await app.request('/api/posts?categoryId=1')
 
       expect(res.status).toBe(200)
-      const json = await res.json()
+      const json = await res.json() as { posts: any[] }
       expect(json.posts).toHaveLength(1)
     })
 
@@ -160,7 +161,7 @@ describe('Posts Router', () => {
       const res = await app.request('/api/posts?authorId=1')
 
       expect(res.status).toBe(200)
-      const json = await res.json()
+      const json = await res.json() as { posts: any[] }
       expect(json.posts).toHaveLength(1)
     })
   })
@@ -193,7 +194,7 @@ describe('Posts Router', () => {
       const res = await app.request('/api/posts/1')
 
       expect(res.status).toBe(200)
-      const json = await res.json()
+      const json = await res.json() as { id: string; title: string }
       expect(json.id).toBe('1')
       expect(json.title).toBe('Test Post')
     })
@@ -205,7 +206,7 @@ describe('Posts Router', () => {
       const res = await app.request('/api/posts/999')
 
       expect(res.status).toBe(404)
-      const json = await res.json()
+      const json = await res.json() as { error: string }
       expect(json.error).toContain('不存在')
     })
   })
@@ -236,7 +237,7 @@ describe('Posts Router', () => {
       })
 
       expect(res.status).toBe(200)
-      const json = await res.json()
+      const json = await res.json() as { title: string }
       expect(json.title).toBe('New Post')
     })
 
@@ -256,7 +257,7 @@ describe('Posts Router', () => {
       })
 
       expect(res.status).toBe(400)
-      const json = await res.json()
+      const json = await res.json() as { error: string }
       expect(json.error).toContain('缺少必要字段')
     })
   })
@@ -296,7 +297,7 @@ describe('Posts Router', () => {
       })
 
       expect(res.status).toBe(200)
-      const json = await res.json()
+      const json = await res.json() as { title: string }
       expect(json.title).toBe('Updated Title')
     })
 
@@ -321,7 +322,7 @@ describe('Posts Router', () => {
       })
 
       expect(res.status).toBe(404)
-      const json = await res.json()
+      const json = await res.json() as { error: string }
       expect(json.error).toContain('不存在')
     })
 
@@ -359,7 +360,7 @@ describe('Posts Router', () => {
       })
 
       expect(res.status).toBe(403)
-      const json = await res.json()
+      const json = await res.json() as { error: string }
       expect(json.error).toContain('无权编辑')
     })
   })
@@ -389,7 +390,7 @@ describe('Posts Router', () => {
       })
 
       expect(res.status).toBe(200)
-      const json = await res.json()
+      const json = await res.json() as { message: string }
       expect(json.message).toBe('删除成功')
     })
 
@@ -404,7 +405,7 @@ describe('Posts Router', () => {
       })
 
       expect(res.status).toBe(404)
-      const json = await res.json()
+      const json = await res.json() as { error: string }
       expect(json.error).toContain('不存在')
     })
 
@@ -432,7 +433,7 @@ describe('Posts Router', () => {
       })
 
       expect(res.status).toBe(403)
-      const json = await res.json()
+      const json = await res.json() as { error: string }
       expect(json.error).toContain('无权删除')
     })
   })
@@ -470,7 +471,7 @@ describe('Posts Router', () => {
       })
 
       expect(res.status).toBe(200)
-      const json = await res.json()
+      const json = await res.json() as { message: string }
       expect(json.message).toBe('点赞成功')
     })
 
@@ -506,7 +507,7 @@ describe('Posts Router', () => {
       })
 
       expect(res.status).toBe(400)
-      const json = await res.json()
+      const json = await res.json() as { error: string }
       expect(json.error).toContain('已经点赞过')
     })
   })
@@ -530,7 +531,7 @@ describe('Posts Router', () => {
       })
 
       expect(res.status).toBe(200)
-      const json = await res.json()
+      const json = await res.json() as { message: string }
       expect(json.message).toBe('取消点赞成功')
     })
   })
@@ -572,7 +573,7 @@ describe('Posts Router', () => {
       const res = await app.request('/api/posts/1/comments')
 
       expect(res.status).toBe(200)
-      const json = await res.json()
+      const json = await res.json() as any[]
       expect(json).toHaveLength(2)
     })
 
@@ -583,7 +584,7 @@ describe('Posts Router', () => {
       const res = await app.request('/api/posts/1/comments')
 
       expect(res.status).toBe(200)
-      const json = await res.json()
+      const json = await res.json() as any[]
       expect(json).toEqual([])
     })
   })

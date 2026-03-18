@@ -22,9 +22,8 @@ describe('Notifications Router', () => {
     })
 
     app = new Hono<{ Bindings: Env; Variables: Variables }>()
-    app.route('/api/notifications', notificationsRouter)
 
-    // Mock the env
+    // Mock the env - must run before route mounting
     app.use('*', async (c, next) => {
       if (!c.env) {
         c.env = {} as Env
@@ -33,6 +32,8 @@ describe('Notifications Router', () => {
       c.env.JWT_SECRET = 'test-secret-key-32-characters-long-key'
       await next()
     })
+
+    app.route('/api/notifications', notificationsRouter)
   })
 
   describe('GET /', () => {
@@ -151,7 +152,7 @@ describe('Notifications Router', () => {
       })
 
       expect(res.status).toBe(200)
-      const json = await res.json()
+      const json = await res.json() as { unread_count: number }
       expect(json.unread_count).toBe(2)
     })
   })
@@ -180,7 +181,7 @@ describe('Notifications Router', () => {
       })
 
       expect(res.status).toBe(200)
-      const json = await res.json()
+      const json = await res.json() as { is_read: boolean }
       expect(json.is_read).toBe(true)
     })
   })
@@ -221,7 +222,7 @@ describe('Notifications Router', () => {
       })
 
       expect(res.status).toBe(200)
-      const json = await res.json()
+      const json = await res.json() as { message: string }
       expect(json.message).toContain('已读')
     })
   })
@@ -250,7 +251,7 @@ describe('Notifications Router', () => {
       })
 
       expect(res.status).toBe(200)
-      const json = await res.json()
+      const json = await res.json() as { message: string }
       expect(json.message).toContain('删除成功')
     })
   })
@@ -291,7 +292,7 @@ describe('Notifications Router', () => {
       })
 
       expect(res.status).toBe(200)
-      const json = await res.json()
+      const json = await res.json() as { message: string }
       expect(json.message).toContain('删除')
     })
   })
