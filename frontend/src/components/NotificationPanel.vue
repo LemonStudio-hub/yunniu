@@ -57,7 +57,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted } from 'vue'
 import { notificationsApi, type Notification } from '../api/notifications'
 import NotificationItem from './NotificationItem.vue'
 

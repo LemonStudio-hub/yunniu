@@ -64,6 +64,7 @@ describe('UI Store', () => {
 
     store.addNotification({
       id: '1',
+      title: 'Success',
       type: 'success',
       message: 'Test notification',
     })
@@ -94,12 +95,14 @@ describe('UI Store', () => {
 
     store.addNotification({
       id: '1',
+      title: 'Success',
       type: 'success',
       message: 'Notification 1',
     })
 
     store.addNotification({
       id: '2',
+      title: 'Error',
       type: 'error',
       message: 'Notification 2',
     })

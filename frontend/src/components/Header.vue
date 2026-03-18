@@ -264,7 +264,6 @@ const router = useRouter()
 
 const isNotificationsOpen = ref(false)
 const unreadCount = ref(0)
-const notificationPanelRef = ref<InstanceType<typeof NotificationPanel> | null>(null)
 let notificationInterval: number | null = null
 
 function handleLogout() {
