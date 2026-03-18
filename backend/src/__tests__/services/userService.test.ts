@@ -91,7 +91,7 @@ describe('UserService', () => {
           email: 'nonexistent@example.com',
           password: 'password123',
         })
-      ).rejects.toThrow('邮箱或密码错误')
+      ).rejects.toThrow('未授权访问')
     })
 
     it('should throw error with invalid password', async () => {
@@ -114,7 +114,7 @@ describe('UserService', () => {
           email: 'test@example.com',
           password: 'wrongpassword',
         })
-      ).rejects.toThrow('邮箱或密码错误')
+      ).rejects.toThrow('未授权访问')
     })
   })
 
