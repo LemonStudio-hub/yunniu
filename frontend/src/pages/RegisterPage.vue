@@ -47,9 +47,14 @@
                 type="text"
                 required
                 minlength="3"
+                maxlength="20"
+                pattern="[a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z]|[a-zA-Z]"
                 class="input-base"
-                placeholder="请输入用户名"
+                placeholder="3-20个字符，不能以数字开头或结尾"
               >
+              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                只能包含字母、数字、下划线和连字符
+              </p>
             </div>
 
             <div>
@@ -147,7 +152,40 @@ const email = ref('')
 const password = ref('')
 const loading = ref(false)
 
+function validateUsername(value: string): string | null {
+  // 检查用户名长度
+  if (value.length < 3) {
+    return '用户名至少为3个字符'
+  }
+  if (value.length > 20) {
+    return '用户名不能超过20个字符'
+  }
+
+  // 检查用户名格式（只允许字母、数字、下划线和连字符）
+  if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
+    return '用户名只能包含字母、数字、下划线和连字符'
+  }
+
+  // 检查是否以数字开头或结尾
+  if (/^[0-9]/.test(value) || /[0-9]$/.test(value)) {
+    return '用户名不能以数字开头或结尾'
+  }
+
+  return null
+}
+
 async function handleSubmit() {
+  // 客户端验证
+  const usernameError = validateUsername(username.value)
+  if (usernameError) {
+    uiStore.addNotification({
+      type: 'error',
+      title: '用户名格式错误',
+      message: usernameError,
+    })
+    return
+  }
+
   loading.value = true
   try {
     const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787'}/api/auth/register`, {
@@ -175,7 +213,7 @@ async function handleSubmit() {
       uiStore.addNotification({
         type: 'error',
         title: '注册失败',
-        message: error.message || '注册失败，请稍后重试',
+        message: error.error?.details || error.error?.message || '注册失败，请稍后重试',
       })
     }
   } catch {
