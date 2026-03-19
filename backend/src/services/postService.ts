@@ -80,7 +80,9 @@ export class PostService {
     if (category_id) {
       countQuery += ' AND category_id = ?'
       countParams.push(category_id)
-    } else if (author_id) {
+    }
+
+    if (author_id) {
       countQuery += ' AND author_id = ?'
       countParams.push(author_id)
     }

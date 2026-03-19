@@ -1,20 +1,25 @@
 import { cors } from 'hono/cors'
 
 // 定义允许的域名列表
+// ⚠️ 注意：CORS 配置应尽可能严格，只允许真正需要的域名
 const ALLOWED_ORIGINS = {
   development: [
+    // 开发环境：只保留本地开发服务器
     'http://localhost:5173',
-    'http://localhost:5174',
     'http://127.0.0.1:5173',
-    'http://127.0.0.1:5174',
   ],
   production: [
-    'https://cloudlink.lemonhub.workers.dev',
-    'https://winuel.pages.dev',
+    // 生产环境：只允许实际使用的域名
+    // 前端应用域名
     'https://www.winuel.com',
-    'https://api.winuel.com',
+    // 备用前端部署域名（如果使用）
+    'https://winuel.pages.dev',
   ],
 }
+
+// 需要移除的域名（仅供参考，不要添加到允许列表）
+// ❌ https://api.winuel.com - 后端 API 不应在前端允许列表中
+// ❌ https://cloudlink.lemonhub.workers.dev - 测试环境域名不应在生产环境
 
 export const corsMiddleware = cors({
   origin: (origin: string | null, c: any) => {
@@ -44,8 +49,8 @@ export const corsMiddleware = cors({
     }
   },
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
-  allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+  allowHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'X-Session-ID'],
   credentials: true,
   maxAge: 86400, // 24 hours
-  exposeHeaders: ['Content-Length', 'X-Kuma-Revision'],
+  exposeHeaders: ['Content-Length', 'X-Kuma-Revision', 'X-CSRF-Token', 'X-Session-ID'],
 })
