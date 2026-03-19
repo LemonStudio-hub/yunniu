@@ -3,6 +3,8 @@ import type { Env } from './types'
 import { initJWT } from './utils/jwt'
 import { initEmailChecker } from './utils/validation'
 import { corsMiddleware } from './middleware/cors'
+import { httpsRedirect, hsts } from './middleware/https'
+import { auditLog } from './middleware/audit'
 import { normalRateLimit } from './middleware/rateLimit'
 import { handleError, formatErrorResponse, logError } from './utils/errorHandler'
 import { BLOCKLIST_DOMAINS, ALLOWLIST_DOMAINS } from './data/blocklist'
@@ -33,6 +35,9 @@ app.use('*', async (c, next) => {
 
 app.use('*', normalRateLimit)
 app.use('*', corsMiddleware)
+app.use('*', auditLog)
+app.use('*', httpsRedirect)
+app.use('*', hsts)
 
 app.get('/', (c) => {
   return c.json({

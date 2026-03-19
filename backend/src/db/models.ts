@@ -5,6 +5,7 @@ export interface User {
   password_hash: string
   avatar?: string
   role: 'user' | 'admin' | 'moderator'
+  deleted_at?: string | null
   created_at: string
   updated_at: string
 }
@@ -30,6 +31,7 @@ export interface Post {
   view_count: number
   like_count: number
   comment_count: number
+  deleted_at?: string | null
   created_at: string
   updated_at: string
 }
@@ -41,6 +43,7 @@ export interface Comment {
   content: string
   parent_id?: string
   like_count: number
+  deleted_at?: string | null
   created_at: string
   updated_at: string
 }
@@ -61,6 +64,21 @@ export interface Notification {
   message: string
   link?: string
   is_read: boolean
+  created_at: string
+}
+
+export interface AuditLog {
+  id: string
+  user_id?: string
+  action: string
+  entity_type: string
+  entity_id: string
+  old_values?: string
+  new_values?: string
+  ip_address?: string
+  user_agent?: string
+  status: 'success' | 'failure'
+  error_message?: string
   created_at: string
 }
 

@@ -68,15 +68,15 @@ export class UserService {
   }
 
   async findById(id: string): Promise<User | null> {
-    return this.db.prepare('SELECT * FROM users WHERE id = ?').bind(id).first<User>()
+    return this.db.prepare('SELECT * FROM users WHERE id = ? AND deleted_at IS NULL').bind(id).first<User>()
   }
 
   async findByUsername(username: string): Promise<User | null> {
-    return this.db.prepare('SELECT * FROM users WHERE username = ?').bind(username).first<User>()
+    return this.db.prepare('SELECT * FROM users WHERE username = ? AND deleted_at IS NULL').bind(username).first<User>()
   }
 
   async findByEmail(email: string): Promise<User | null> {
-    return this.db.prepare('SELECT * FROM users WHERE email = ?').bind(email).first<User>()
+    return this.db.prepare('SELECT * FROM users WHERE email = ? AND deleted_at IS NULL').bind(email).first<User>()
   }
 
   async getPublicUser(userId: string): Promise<Omit<User, 'password_hash'> | null> {

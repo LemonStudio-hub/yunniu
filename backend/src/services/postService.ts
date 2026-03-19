@@ -44,7 +44,7 @@ export class PostService {
   }
 
   async findById(id: string): Promise<Post | null> {
-    return this.db.prepare('SELECT * FROM posts WHERE id = ?').bind(id).first<Post>()
+    return this.db.prepare('SELECT * FROM posts WHERE id = ? AND deleted_at IS NULL').bind(id).first<Post>()
   }
 
   async findAll(options: {
@@ -56,7 +56,7 @@ export class PostService {
     const { page = 1, limit = 20, category_id, author_id } = options
     const offset = (page - 1) * limit
 
-    let query = 'SELECT * FROM posts WHERE 1=1'
+    let query = 'SELECT * FROM posts WHERE deleted_at IS NULL'
     const params: any[] = []
 
     if (category_id) {
@@ -74,13 +74,17 @@ export class PostService {
 
     const posts = await this.db.prepare(query).bind(...params).all<Post>()
 
-    const countQuery = category_id
-      ? 'SELECT COUNT(*) as count FROM posts WHERE category_id = ?'
-      : author_id
-      ? 'SELECT COUNT(*) as count FROM posts WHERE author_id = ?'
-      : 'SELECT COUNT(*) as count FROM posts'
+    let countQuery = 'SELECT COUNT(*) as count FROM posts WHERE deleted_at IS NULL'
+    const countParams: any[] = []
 
-    const countParams = category_id ? [category_id] : author_id ? [author_id] : []
+    if (category_id) {
+      countQuery += ' AND category_id = ?'
+      countParams.push(category_id)
+    } else if (author_id) {
+      countQuery += ' AND author_id = ?'
+      countParams.push(author_id)
+    }
+
     const countResult = await this.db.prepare(countQuery).bind(...countParams).first<{ count: number }>()
 
     return {
@@ -119,19 +123,19 @@ export class PostService {
   }
 
   async delete(id: string): Promise<void> {
-    await this.db.prepare('DELETE FROM posts WHERE id = ?').bind(id).run()
+    await this.db.prepare('UPDATE posts SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?').bind(id).run()
   }
 
   async incrementViewCount(id: string): Promise<void> {
-    await this.db.prepare('UPDATE posts SET view_count = view_count + 1 WHERE id = ?').bind(id).run()
+    await this.db.prepare('UPDATE posts SET view_count = view_count + 1 WHERE id = ? AND deleted_at IS NULL').bind(id).run()
   }
 
   async incrementLikeCount(id: string): Promise<void> {
-    await this.db.prepare('UPDATE posts SET like_count = like_count + 1 WHERE id = ?').bind(id).run()
+    await this.db.prepare('UPDATE posts SET like_count = like_count + 1 WHERE id = ? AND deleted_at IS NULL').bind(id).run()
   }
 
   async decrementLikeCount(id: string): Promise<void> {
-    await this.db.prepare('UPDATE posts SET like_count = like_count - 1 WHERE id = ?').bind(id).run()
+    await this.db.prepare('UPDATE posts SET like_count = like_count - 1 WHERE id = ? AND deleted_at IS NULL').bind(id).run()
   }
 
   async incrementCommentCount(id: string): Promise<void> {
@@ -158,12 +162,12 @@ export class PostService {
   }
 
   async findCommentById(id: string): Promise<Comment | null> {
-    return this.db.prepare('SELECT * FROM comments WHERE id = ?').bind(id).first<Comment>()
+    return this.db.prepare('SELECT * FROM comments WHERE id = ? AND deleted_at IS NULL').bind(id).first<Comment>()
   }
 
   async findCommentsByPostId(postId: string): Promise<Comment[]> {
     const result = await this.db
-      .prepare('SELECT * FROM comments WHERE post_id = ? ORDER BY created_at ASC')
+      .prepare('SELECT * FROM comments WHERE post_id = ? AND deleted_at IS NULL ORDER BY created_at ASC')
       .bind(postId)
       .all<Comment>()
 
@@ -182,17 +186,17 @@ export class PostService {
   async deleteComment(id: string): Promise<void> {
     const comment = await this.findCommentById(id)
     if (comment) {
-      await this.db.prepare('DELETE FROM comments WHERE id = ?').bind(id).run()
+      await this.db.prepare('UPDATE comments SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?').bind(id).run()
       await this.decrementCommentCount(comment.post_id)
     }
   }
 
   async incrementCommentLikeCount(id: string): Promise<void> {
-    await this.db.prepare('UPDATE comments SET like_count = like_count + 1 WHERE id = ?').bind(id).run()
+    await this.db.prepare('UPDATE comments SET like_count = like_count + 1 WHERE id = ? AND deleted_at IS NULL').bind(id).run()
   }
 
   async decrementCommentLikeCount(id: string): Promise<void> {
-    await this.db.prepare('UPDATE comments SET like_count = like_count - 1 WHERE id = ?').bind(id).run()
+    await this.db.prepare('UPDATE comments SET like_count = like_count - 1 WHERE id = ? AND deleted_at IS NULL').bind(id).run()
   }
 
   private async addTagsToPost(postId: string, tagNames: string[]): Promise<void> {
