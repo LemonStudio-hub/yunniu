@@ -1,15 +1,16 @@
 <template>
-  <div class="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12">
+  <div class="min-h-[calc(100vh-4rem)] flex items-center justify-center px-4 py-12 bg-grid">
     <div class="w-full max-w-md">
       <div class="card-base p-8 sm:p-10 relative overflow-hidden">
-        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-secondary-400/20 to-accent-400/20 rounded-full blur-3xl" />
-        <div class="absolute bottom-0 left-0 w-32 h-32 bg-gradient-to-tr from-primary-400/20 to-secondary-400/20 rounded-full blur-3xl" />
+        <div class="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-secondary-400/10 to-accent-400/10 rounded-full blur-3xl animate-float" />
+        <div class="absolute bottom-0 left-0 w-40 h-40 bg-gradient-to-tr from-primary-400/10 to-secondary-400/10 rounded-full blur-3xl animate-float" style="animation-delay: 1s;" />
 
         <div class="relative">
           <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-2xl shadow-lg shadow-primary-500/25 mb-4">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-600 rounded-2xl shadow-xl shadow-primary-500/30 mb-4 hover:scale-110 hover:rotate-6 transition-all duration-400 group">
+              <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl"></div>
               <svg
-                class="w-8 h-8 text-white"
+                class="w-8 h-8 text-white relative z-10 group-hover:animate-pulse-slow"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -22,10 +23,10 @@
                 />
               </svg>
             </div>
-            <h1 class="text-3xl font-display font-bold text-gradient mb-2">
+            <h1 class="text-3xl font-display font-bold text-gradient-simple mb-2">
               创建账户
             </h1>
-            <p class="text-sm text-gray-500 dark:text-gray-400">
+            <p class="text-sm text-gray-500 dark:text-gray-400 font-medium">
               加入云纽社区，开始分享
             </p>
           </div>
@@ -37,7 +38,7 @@
             <div>
               <label
                 for="username"
-                class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+                class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
               >
                 用户名
               </label>
@@ -49,10 +50,10 @@
                 minlength="3"
                 maxlength="20"
                 pattern="[a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z]|[a-zA-Z]"
-                class="input-base"
+                class="input-base transition-all duration-300 hover:border-primary-300 dark:hover:border-primary-500"
                 placeholder="3-20个字符，不能以数字开头或结尾"
               >
-              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 font-medium">
                 只能包含字母、数字、下划线和连字符
               </p>
             </div>
@@ -60,7 +61,7 @@
             <div>
               <label
                 for="email"
-                class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+                class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
               >
                 邮箱地址
               </label>
@@ -69,7 +70,7 @@
                 v-model="email"
                 type="email"
                 required
-                class="input-base"
+                class="input-base transition-all duration-300 hover:border-primary-300 dark:hover:border-primary-500"
                 placeholder="your@email.com"
               >
             </div>
@@ -77,7 +78,7 @@
             <div>
               <label
                 for="password"
-                class="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2"
+                class="block text-sm font-bold text-gray-700 dark:text-gray-300 mb-2"
               >
                 密码
               </label>
@@ -87,7 +88,7 @@
                 type="password"
                 required
                 minlength="8"
-                class="input-base"
+                class="input-base transition-all duration-300 hover:border-primary-300 dark:hover:border-primary-500"
                 placeholder="至少 8 个字符"
               >
             </div>
@@ -95,7 +96,7 @@
             <button
               type="submit"
               :disabled="loading"
-              class="w-full btn-primary text-base py-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-lg"
+              class="w-full btn-primary text-base py-3 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 disabled:hover:shadow-lg disabled:hover:-translate-y-0.5 disabled:active:scale-100 flex items-center justify-center gap-2"
             >
               <svg
                 v-if="loading"
@@ -126,7 +127,7 @@
             已有账号？
             <router-link
               to="/login"
-              class="text-primary-500 hover:text-primary-600 font-semibold transition-colors"
+              class="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-bold transition-colors hover:underline underline-offset-4"
             >
               立即登录
             </router-link>

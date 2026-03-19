@@ -1,13 +1,14 @@
 <template>
-  <header class="glass sticky top-0 z-50 border-b border-gray-100 dark:border-gray-700 shadow-sm">
+  <header class="glass-strong sticky top-0 z-50 border-b border-gray-200/50 dark:border-gray-700/50 shadow-sm backdrop-blur-xl">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-4">
         <button
-          class="p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-all duration-200 lg:hidden"
+          class="p-2 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-700/50 transition-all duration-300 lg:hidden hover:scale-110 active:scale-95"
           @click="uiStore.toggleSidebar"
+          aria-label="Toggle sidebar"
         >
           <svg
-            class="w-6 h-6 text-gray-600 dark:text-gray-400"
+            class="w-6 h-6 text-gray-600 dark:text-gray-400 transition-colors"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -24,9 +25,10 @@
           to="/"
           class="flex items-center gap-3 group"
         >
-          <div class="relative w-10 h-10 bg-gradient-to-br from-primary-500 to-secondary-500 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/25 group-hover:shadow-xl group-hover:shadow-primary-500/40 transition-all duration-300 group-hover:scale-105">
+          <div class="relative w-10 h-10 bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/30 group-hover:shadow-xl group-hover:shadow-primary-500/50 transition-all duration-400 group-hover:scale-110 group-hover:rotate-3">
+            <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-xl"></div>
             <svg
-              class="w-6 h-6 text-white"
+              class="w-6 h-6 text-white relative z-10"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -39,19 +41,20 @@
               />
             </svg>
           </div>
-          <span class="text-2xl font-display font-bold text-gradient">云纽</span>
+          <span class="text-2xl font-display font-bold text-gradient-simple group-hover:animate-pulse-slow">云纽</span>
         </router-link>
       </div>
 
       <div class="flex items-center gap-2 sm:gap-3">
         <button
-          class="p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-all duration-200 group"
+          class="p-2.5 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-700/50 transition-all duration-300 group hover:scale-110 active:scale-95"
           title="切换主题"
           @click="uiStore.toggleTheme"
+          aria-label="Toggle theme"
         >
           <svg
             v-if="uiStore.theme === 'dark'"
-            class="w-5 h-5 text-yellow-400 group-hover:scale-110 transition-transform duration-200"
+            class="w-5 h-5 text-yellow-400 group-hover:scale-110 group-hover:rotate-12 transition-all duration-300"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -65,7 +68,7 @@
           </svg>
           <svg
             v-else
-            class="w-5 h-5 text-primary-600 dark:text-primary-400 group-hover:scale-110 transition-transform duration-200"
+            class="w-5 h-5 text-primary-600 dark:text-primary-400 group-hover:scale-110 group-hover:-rotate-12 transition-all duration-300"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -82,7 +85,7 @@
         <template v-if="!userStore.isAuthenticated">
           <router-link
             to="/login"
-            class="px-5 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-xl transition-all duration-200"
+            class="px-5 py-2.5 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100/80 dark:hover:bg-gray-700/50 rounded-xl transition-all duration-300 hover:scale-105 active:scale-95"
           >
             登录
           </router-link>
@@ -117,12 +120,13 @@
 
           <div class="relative">
             <button
-              class="p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-all duration-200 relative"
+              class="p-2.5 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-700/50 transition-all duration-300 relative hover:scale-110 active:scale-95"
               title="通知"
               @click="toggleNotifications"
+              aria-label="Notifications"
             >
               <svg
-                class="w-5 h-5 text-gray-600 dark:text-gray-400"
+                class="w-5 h-5 text-gray-600 dark:text-gray-400 transition-colors"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -136,7 +140,7 @@
               </svg>
               <span
                 v-if="unreadCount > 0"
-                class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 text-xs font-bold text-white bg-red-500 rounded-full flex items-center justify-center"
+                class="absolute -top-0.5 -right-0.5 min-w-[18px] h-[18px] px-1 text-xs font-bold text-white bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg shadow-red-500/30 animate-pulse-slow"
               >
                 {{ unreadCount > 9 ? '9+' : unreadCount }}
               </span>
@@ -150,20 +154,20 @@
           </div>
 
           <div class="relative group">
-            <button class="flex items-center gap-2 p-1.5 pr-3 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-all duration-200">
+            <button class="flex items-center gap-2 p-1.5 pr-3 rounded-xl hover:bg-gray-100/80 dark:hover:bg-gray-700/50 transition-all duration-300 hover:scale-105 active:scale-95" aria-label="User menu">
               <div class="relative">
                 <img
                   :src="userStore.user?.avatar || '/default-avatar.png'"
                   :alt="userStore.user?.username"
-                  class="w-9 h-9 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-600"
+                  class="w-9 h-9 rounded-full object-cover ring-2 ring-gray-200 dark:ring-gray-600 ring-offset-2 ring-offset-white dark:ring-offset-gray-800 transition-all duration-300 group-hover:ring-primary-400 dark:group-hover:ring-primary-500"
                 >
-                <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white dark:border-gray-800 rounded-full" />
+                <div class="absolute bottom-0 right-0 w-3 h-3 bg-gradient-to-br from-green-400 to-green-500 border-2 border-white dark:border-gray-800 rounded-full shadow-sm"></div>
               </div>
               <span class="text-sm font-medium text-gray-700 dark:text-gray-300 hidden sm:block">
                 {{ userStore.user?.username }}
               </span>
               <svg
-                class="w-4 h-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors"
+                class="w-4 h-4 text-gray-400 group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-all duration-300 group-hover:rotate-180"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -176,14 +180,14 @@
                 />
               </svg>
             </button>
-            <div class="absolute right-0 mt-2 w-56 glass rounded-xl shadow-xl border border-gray-200 dark:border-gray-600 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 transform origin-top-right">
+            <div class="absolute right-0 mt-2 w-56 glass-strong rounded-xl shadow-xl shadow-gray-200/50 dark:shadow-gray-900/50 border border-gray-200/50 dark:border-gray-700/50 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform origin-top-right group-hover:translate-y-0 translate-y-2">
               <div class="p-2 space-y-1">
                 <router-link
                   :to="`/user/${userStore.user?.username}`"
-                  class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-all duration-150"
+                  class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-primary-50 hover:to-primary-100 dark:hover:from-primary-900/20 dark:hover:to-primary-800/20 rounded-lg transition-all duration-200 hover:scale-105 hover:translate-x-1"
                 >
                   <svg
-                    class="w-5 h-5"
+                    class="w-5 h-5 text-gray-500 dark:text-gray-400 transition-colors"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -199,10 +203,10 @@
                 </router-link>
                 <router-link
                   to="/settings"
-                  class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700/50 rounded-lg transition-all duration-150"
+                  class="flex items-center gap-3 px-4 py-2.5 text-sm text-gray-700 dark:text-gray-300 hover:bg-gradient-to-r hover:from-primary-50 hover:to-primary-100 dark:hover:from-primary-900/20 dark:hover:to-primary-800/20 rounded-lg transition-all duration-200 hover:scale-105 hover:translate-x-1"
                 >
                   <svg
-                    class="w-5 h-5"
+                    class="w-5 h-5 text-gray-500 dark:text-gray-400 transition-colors"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -222,9 +226,9 @@
                   </svg>
                   设置
                 </router-link>
-                <div class="h-px bg-gray-200 dark:bg-gray-600 my-1" />
+                <div class="h-px bg-gray-200 dark:bg-gray-600 my-1"></div>
                 <button
-                  class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-150"
+                  class="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-all duration-200 hover:scale-105 hover:translate-x-1"
                   @click="handleLogout"
                 >
                   <svg
@@ -291,7 +295,7 @@ function startPolling() {
   loadUnreadCount()
   notificationInterval = window.setInterval(() => {
     loadUnreadCount()
-  }, 30000) // 每30秒轮询一次
+  }, 30000)
 }
 
 function stopPolling() {
@@ -311,7 +315,6 @@ onUnmounted(() => {
   stopPolling()
 })
 
-// 监听用户登录状态变化
 watch(() => userStore.isAuthenticated, (isAuthenticated) => {
   if (isAuthenticated) {
     startPolling()
