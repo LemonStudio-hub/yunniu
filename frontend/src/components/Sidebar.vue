@@ -139,7 +139,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUIStore } from '../stores/ui'
 import { useUserStore } from '../stores/user'
