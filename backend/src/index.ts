@@ -15,6 +15,13 @@ import commentsRouter from './routes/comments'
 import categoriesRouter from './routes/categories'
 import notificationsRouter from './routes/notifications'
 
+// Admin routes
+import adminUsersRouter from './routes/admin/users'
+import adminPostsRouter from './routes/admin/posts'
+import adminCommentsRouter from './routes/admin/comments'
+import adminAuditLogsRouter from './routes/admin/audit-logs'
+import adminStatsRouter from './routes/admin/stats'
+
 // 初始化一次性邮箱检查器
 initEmailChecker(
   [...BLOCKLIST_DOMAINS],
@@ -58,6 +65,13 @@ app.route('/api/posts', postsRouter)
 app.route('/api/comments', commentsRouter)
 app.route('/api/categories', categoriesRouter)
 app.route('/api/notifications', notificationsRouter)
+
+// Admin routes
+app.route('/api/admin/users', adminUsersRouter)
+app.route('/api/admin/posts', adminPostsRouter)
+app.route('/api/admin/comments', adminCommentsRouter)
+app.route('/api/admin/audit-logs', adminAuditLogsRouter)
+app.route('/api/admin/stats', adminStatsRouter)
 
 app.notFound((c) => {
   const error = handleError(new Error('Not Found'))
