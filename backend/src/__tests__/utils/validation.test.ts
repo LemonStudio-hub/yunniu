@@ -24,6 +24,26 @@ describe('Validation Utils', () => {
       expect(result.isValid).toBe(true)
     })
 
+    it('should accept Chinese username', () => {
+      const result = validateUsername('张三丰')
+      expect(result.isValid).toBe(true)
+    })
+
+    it('should accept mixed Chinese and English username', () => {
+      const result = validateUsername('张三丰abc123')
+      expect(result.isValid).toBe(true)
+    })
+
+    it('should accept username starting with number', () => {
+      const result = validateUsername('123user')
+      expect(result.isValid).toBe(true)
+    })
+
+    it('should accept username ending with number', () => {
+      const result = validateUsername('user123')
+      expect(result.isValid).toBe(true)
+    })
+
     it('should reject too short username', () => {
       const result = validateUsername('ab')
       expect(result.isValid).toBe(false)
@@ -61,39 +81,60 @@ describe('Validation Utils', () => {
   })
 
   describe('validatePassword', () => {
-    it('should accept strong password', () => {
-      const result = validatePassword('Test123!@#')
+    it('should accept valid password with letters and numbers', () => {
+      const result = validatePassword('myPassword1')
       expect(result.isValid).toBe(true)
     })
 
-    it('should reject too short password', () => {
-      const result = validatePassword('Test1!')
+    it('should accept password with uppercase letters', () => {
+      const result = validatePassword('MyPassword1')
+      expect(result.isValid).toBe(true)
+    })
+
+    it('should accept password with only lowercase letters', () => {
+      const result = validatePassword('mypassword1')
+      expect(result.isValid).toBe(true)
+    })
+
+    it('should accept password with only uppercase letters', () => {
+      const result = validatePassword('MYPASSWORD1')
+      expect(result.isValid).toBe(true)
+    })
+
+    it('should reject password with only 7 characters', () => {
+      const result = validatePassword('test123')
       expect(result.isValid).toBe(false)
       expect(result.errors).toContain('密码长度至少为8个字符')
     })
 
-    it('should reject password without uppercase letter', () => {
-      const result = validatePassword('test123!@#')
-      expect(result.isValid).toBe(false)
-      expect(result.errors).toContain('密码必须包含至少一个大写字母')
-    })
-
-    it('should reject password without lowercase letter', () => {
-      const result = validatePassword('TEST123!@#')
-      expect(result.isValid).toBe(false)
-      expect(result.errors).toContain('密码必须包含至少一个小写字母')
-    })
-
-    it('should reject password without number', () => {
-      const result = validatePassword('Test!@#$%^')
+    it('should reject password with only letters', () => {
+      const result = validatePassword('testabcd')
       expect(result.isValid).toBe(false)
       expect(result.errors).toContain('密码必须包含至少一个数字')
     })
 
-    it('should reject password without special character', () => {
-      const result = validatePassword('Test123456')
+    it('should reject password with only numbers', () => {
+      const result = validatePassword('1234567')
       expect(result.isValid).toBe(false)
-      expect(result.errors).toContain('密码必须包含至少一个特殊字符')
+      expect(result.errors).toContain('密码必须包含至少一个字母')
+    })
+
+    it('should reject password with special characters', () => {
+      const result = validatePassword('test123!@#')
+      expect(result.isValid).toBe(false)
+      expect(result.errors).toContain('密码只能包含字母和数字')
+    })
+
+    it('should reject common weak passwords', () => {
+      const result = validatePassword('password123')
+      expect(result.isValid).toBe(false)
+      expect(result.errors).toContain('密码过于简单，请使用更复杂的密码')
+    })
+
+    it('should reject too long password', () => {
+      const result = validatePassword('a'.repeat(129))
+      expect(result.isValid).toBe(false)
+      expect(result.errors).toContain('密码长度不能超过128个字符')
     })
   })
 

@@ -139,7 +139,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useUIStore } from '../stores/ui'
 import { useUserStore } from '../stores/user'
@@ -174,11 +174,4 @@ function handleLinkClick() {
 function isActiveRoute(path: string): boolean {
   return route.path === path || route.path.startsWith(path + '/')
 }
-
-// 监听窗口大小变化，确保侧边栏状态正确
-watch(() => window.innerWidth, (width) => {
-  if (width >= 1024) {
-    uiStore.sidebarOpen = true
-  }
-}, { immediate: true })
 </script>

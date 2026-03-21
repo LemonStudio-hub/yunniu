@@ -228,7 +228,7 @@ export function validateDisposableEmail(email: string): ValidationResult {
 export function validatePassword(password: string): ValidationResult {
   const errors: string[] = []
 
-  // 最小长度检查
+  // 最小长度检查（至少8位）
   if (password.length < 8) {
     errors.push('密码长度至少为8个字符')
   }
@@ -238,14 +238,9 @@ export function validatePassword(password: string): ValidationResult {
     errors.push('密码长度不能超过128个字符')
   }
 
-  // 检查是否包含大写字母
-  if (!/[A-Z]/.test(password)) {
-    errors.push('密码必须包含至少一个大写字母')
-  }
-
-  // 检查是否包含小写字母
-  if (!/[a-z]/.test(password)) {
-    errors.push('密码必须包含至少一个小写字母')
+  // 检查是否包含字母
+  if (!/[a-zA-Z]/.test(password)) {
+    errors.push('密码必须包含至少一个字母')
   }
 
   // 检查是否包含数字
@@ -253,16 +248,18 @@ export function validatePassword(password: string): ValidationResult {
     errors.push('密码必须包含至少一个数字')
   }
 
-  // 检查是否包含特殊字符
-  if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
-    errors.push('密码必须包含至少一个特殊字符')
+  // 检查是否只包含字母和数字
+  if (!/^[a-zA-Z0-9]+$/.test(password)) {
+    errors.push('密码只能包含字母和数字')
   }
 
   // 检查常见弱密码
   const commonPasswords = [
-    'password', '123456', 'qwerty', 'abc123',
-    'password1', '12345678', 'admin', 'letmein',
-    'welcome', 'monkey', 'dragon', 'master'
+    'password', '12345678', 'qwerty', 'abc123',
+    'password123', '123456789', 'admin', 'letmein',
+    'welcome', 'monkey', 'dragon', 'master',
+    '12345678', '11111111', 'qwerty123', 'test1234',
+    '123456ab', '123abc12', 'password1', '1234qwer'
   ]
   if (commonPasswords.includes(password.toLowerCase())) {
     errors.push('密码过于简单，请使用更复杂的密码')
@@ -305,14 +302,10 @@ export function validateUsername(username: string): ValidationResult {
     errors.push('用户名不能超过20个字符')
   }
 
-  // 检查用户名格式（只允许字母、数字、下划线和连字符）
-  if (!/^[a-zA-Z0-9_-]+$/.test(username)) {
-    errors.push('用户名只能包含字母、数字、下划线和连字符')
-  }
-
-  // 检查是否以数字开头或结尾
-  if (/^[0-9]/.test(username) || /[0-9]$/.test(username)) {
-    errors.push('用户名不能以数字开头或结尾')
+  // 检查用户名格式（允许中文、字母、数字、下划线和连字符）
+  // 使用更广泛的中文 Unicode 范围
+  if (!/^[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaffa-zA-Z0-9_-]+$/.test(username)) {
+    errors.push('用户名只能包含中文、字母、数字、下划线和连字符')
   }
 
   return {

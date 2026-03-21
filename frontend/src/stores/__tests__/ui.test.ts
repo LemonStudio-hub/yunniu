@@ -15,7 +15,7 @@ describe('UI Store', () => {
     const store = useUIStore()
 
     expect(store.theme).toBe('dark')
-    expect(store.sidebarOpen).toBe(true)
+    expect(store.sidebarOpen).toBe(false)
     expect(store.notifications).toEqual([])
   })
 
@@ -48,15 +48,15 @@ describe('UI Store', () => {
   it('toggles sidebar', () => {
     const store = useUIStore()
 
-    expect(store.sidebarOpen).toBe(true)
-
-    store.toggleSidebar()
-
     expect(store.sidebarOpen).toBe(false)
 
     store.toggleSidebar()
 
     expect(store.sidebarOpen).toBe(true)
+
+    store.toggleSidebar()
+
+    expect(store.sidebarOpen).toBe(false)
   })
 
   it('adds notification', () => {

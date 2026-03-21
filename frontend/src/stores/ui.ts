@@ -5,7 +5,7 @@ export const useUIStore = defineStore('ui', () => {
   // 从 localStorage 读取保存的主题，默认为 'dark'
   const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null
   const theme = ref<'light' | 'dark'>(savedTheme || 'dark')
-  const sidebarOpen = ref(true)
+  const sidebarOpen = ref(false)
   const notifications = ref<Notification[]>([])
 
   // 自定义主题颜色
