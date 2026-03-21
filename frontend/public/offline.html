@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>离线 - 云纽论坛</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .offline-container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      animation: slideUp 0.5s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .offline-icon {
+      width: 80px;
+      height: 80px;
+      margin: 0 auto 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+
+    .offline-icon svg {
+      width: 40px;
+      height: 40px;
+      color: white;
+    }
+
+    h1 {
+      color: #333;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      color: #666;
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+
+    .retry-button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 30px;
+      font-size: 16px;
+      border-radius: 25px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    }
+
+    .retry-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    .retry-button:active {
+      transform: translateY(0);
+    }
+
+    .tips {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+
+    .tips h3 {
+      color: #333;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .tips ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .tips li {
+      color: #666;
+      font-size: 14px;
+      padding: 5px 0;
+    }
+
+    .tips li::before {
+      content: "•";
+      color: #667eea;
+      margin-right: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="offline-container">
+    <div class="offline-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 010 12.728m0 0l-2.829-2.829m2.829 2.829L21 21M15.536 8.464a5 5 0 010 7.072m0 0l-2.829-2.829m-4.243 2.829a4.978 4.978 0 01-1.414-2.83m-1.414 5.658a9 9 0 01-2.167-9.238m7.824 2.167a1 1 0 111.414 1.414m-1.414-1.414L3 3m8.293 8.293l1.414 1.414" />
+      </svg>
+    </div>
+    <h1>您当前处于离线状态</h1>
+    <p>无法连接到网络，请检查您的网络设置后重试。</p>
+    <button class="retry-button" onclick="window.location.reload()">
+      重新连接
+    </button>
+    <div class="tips">
+      <h3>提示：</h3>
+      <ul>
+        <li>检查网络连接是否正常</li>
+        <li>确认路由器或热点是否开启</li>
+        <li>尝试刷新页面重新连接</li>
+        <li>部分内容可能已缓存，可继续浏览</li>
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // 定期检查网络连接
+    let checkInterval;
+    
+    function checkConnection() {
+      if (navigator.onLine) {
+        // 网络已恢复，重新加载页面
+        window.location.reload();
+      }
+    }
+    
+    // 开始定期检查
+    function startChecking() {
+      checkInterval = setInterval(checkConnection, 3000);
+    }
+    
+    // 停止检查
+    function stopChecking() {
+      if (checkInterval) {
+        clearInterval(checkInterval);
+      }
+    }
+    
+    // 监听网络状态变化
+    window.addEventListener('online', () => {
+      console.log('网络已恢复');
+      window.location.reload();
+    });
+    
+    window.addEventListener('offline', () => {
+      console.log('网络已断开');
+    });
+    
+    // 页面加载时开始检查
+    startChecking();
+    
+    // 页面卸载时停止检查
+    window.addEventListener('beforeunload', stopChecking);
+  </script>
+</body>
+</html>

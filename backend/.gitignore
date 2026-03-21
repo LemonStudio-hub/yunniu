@@ -1,0 +1,30 @@
+# Environment variables - DO NOT COMMIT
+.dev.vars
+.dev.vars.local
+
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Coverage
+coverage/
+
+# Logs
+*.log
+
+# Wrangler
+.wrangler/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+.cache/
