@@ -49,12 +49,12 @@
                 required
                 minlength="3"
                 maxlength="20"
-                pattern="[a-zA-Z][a-zA-Z0-9_-]*[a-zA-Z]|[a-zA-Z]"
+                pattern="[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaffa-zA-Z0-9_-]+"
                 class="input-base transition-all duration-300 hover:border-primary-300 dark:hover:border-primary-500"
-                placeholder="3-20个字符，不能以数字开头或结尾"
+                placeholder="3-20个字符，支持中文"
               >
               <p class="mt-1 text-xs text-gray-500 dark:text-gray-400 font-medium">
-                只能包含字母、数字、下划线和连字符
+                支持中文、字母、数字、下划线和连字符
               </p>
             </div>
 
@@ -87,9 +87,9 @@
                 v-model="password"
                 type="password"
                 required
-                minlength="8"
+                minlength="7"
                 class="input-base transition-all duration-300 hover:border-primary-300 dark:hover:border-primary-500"
-                placeholder="至少 8 个字符"
+                placeholder="大于6个字符，仅字母和数字"
               >
             </div>
 
@@ -162,14 +162,10 @@ function validateUsername(value: string): string | null {
     return '用户名不能超过20个字符'
   }
 
-  // 检查用户名格式（只允许字母、数字、下划线和连字符）
-  if (!/^[a-zA-Z0-9_-]+$/.test(value)) {
-    return '用户名只能包含字母、数字、下划线和连字符'
-  }
-
-  // 检查是否以数字开头或结尾
-  if (/^[0-9]/.test(value) || /[0-9]$/.test(value)) {
-    return '用户名不能以数字开头或结尾'
+  // 检查用户名格式（允许中文、字母、数字、下划线和连字符）
+  // 使用更广泛的中文 Unicode 范围
+  if (!/^[\u3400-\u4dbf\u4e00-\u9fff\uf900-\ufaffa-zA-Z0-9_-]+$/.test(value)) {
+    return '用户名只能包含中文、字母、数字、下划线和连字符'
   }
 
   return null
