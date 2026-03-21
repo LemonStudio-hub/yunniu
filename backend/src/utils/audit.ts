@@ -1,5 +1,5 @@
 import type { Context } from 'hono'
-import type { Env } from '../types'
+import type { Env, Variables } from '../types'
 
 export interface AuditLogData {
   action: string
@@ -13,7 +13,7 @@ export interface AuditLogData {
  * 创建审计日志
  * 记录所有重要操作，包括用户管理、内容审核、系统设置等
  */
-export async function createAuditLog(c: Context<{ Bindings: Env }>, data: AuditLogData) {
+export async function createAuditLog(c: Context<{ Bindings: Env; Variables: Variables }>, data: AuditLogData) {
   try {
     const userId = c.get('userId') || c.get('currentUser')?.id || null
     const userAgent = c.req.header('user-agent') || null

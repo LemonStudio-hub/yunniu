@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import type { Env } from './types'
+import type { Env, Variables } from './types'
 import { initJWT } from './utils/jwt'
 import { initEmailChecker } from './utils/validation'
 import { corsMiddleware } from './middleware/cors'
@@ -28,7 +28,7 @@ initEmailChecker(
   [...ALLOWLIST_DOMAINS]
 )
 
-const app = new Hono<{ Bindings: Env }>()
+const app = new Hono<{ Bindings: Env; Variables: Variables }>()
 
 // Set global environment and initialize JWT
 app.use('*', async (c, next) => {

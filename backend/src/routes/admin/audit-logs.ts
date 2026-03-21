@@ -132,8 +132,8 @@ app.get('/api/admin/audit-logs/:id', requireAdmin, async (c) => {
       success: true,
       data: {
         ...log,
-        old_values: log.old_values ? JSON.parse(log.old_values) : null,
-        new_values: log.new_values ? JSON.parse(log.new_values) : null,
+        old_values: log.old_values ? JSON.parse(log.old_values as string) : null,
+        new_values: log.new_values ? JSON.parse(log.new_values as string) : null,
       },
     })
   } catch (error) {

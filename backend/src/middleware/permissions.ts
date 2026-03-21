@@ -1,5 +1,5 @@
 import type { Context, Next } from 'hono'
-import type { Env } from '../types'
+import type { Env, Variables } from '../types'
 
 export enum Role {
   USER = 'user',
@@ -56,14 +56,14 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     Permission.USER_BAN,
     Permission.USER_UNBAN,
     Permission.POST_READ,
-    POST_UPDATE: Permission.POST_UPDATE,
+    Permission.POST_UPDATE,
     Permission.POST_DELETE,
     Permission.POST_PIN,
     Permission.POST_UNPIN,
     Permission.POST_AUDIT,
     Permission.COMMENT_READ,
     Permission.COMMENT_DELETE,
-    COMMENT_AUDIT: Permission.COMMENT_AUDIT,
+    Permission.COMMENT_AUDIT,
     Permission.AUDIT_LOG_READ,
   ],
   [Role.ADMIN]: [
@@ -82,7 +82,7 @@ const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
     Permission.POST_AUDIT,
     Permission.COMMENT_READ,
     Permission.COMMENT_DELETE,
-    COMMENT_AUDIT: Permission.COMMENT_AUDIT,
+    Permission.COMMENT_AUDIT,
     Permission.CATEGORY_CREATE,
     Permission.CATEGORY_UPDATE,
     Permission.CATEGORY_DELETE,
@@ -119,7 +119,7 @@ export function hasAnyPermission(userRole: Role, permissions: Permission[]): boo
  * 返回一个中间件函数，用于检查请求者是否具有所需权限
  */
 export function requirePermission(...permissions: Permission[]) {
-  return async (c: Context<{ Bindings: Env }>, next: Next) => {
+  return async (c: Context<{ Bindings: Env; Variables: Variables }>, next: Next) => {
     const userId = c.get('userId') as string | undefined
     
     if (!userId) {
@@ -192,7 +192,7 @@ export function requireAdmin() {
  * 审核员或管理员权限中间件
  */
 export function requireModeratorOrAdmin() {
-  return async (c: Context<{ Bindings: Env }>, next: Next) => {
+  return async (c: Context<{ Bindings: Env; Variables: Variables }>, next: Next) => {
     const userId = c.get('userId') as string | undefined
     
     if (!userId) {

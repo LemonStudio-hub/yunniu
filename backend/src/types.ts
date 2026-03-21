@@ -12,6 +12,9 @@ export type Bindings = Env
 
 export type Variables = {
   user: JWTPayload
+  userId?: string
+  currentUser?: any
+  userRole?: string
 }
 
 export type AppContext = {

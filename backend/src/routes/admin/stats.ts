@@ -1,8 +1,8 @@
 import { Hono } from 'hono'
-import type { Env } from '../../types'
+import type { Env, Variables } from '../../types'
 import { requireModeratorOrAdmin } from '../../middleware/permissions'
 
-const app = new Hono<{ Bindings: Env }>()
+const app = new Hono<{ Bindings: Env; Variables: Variables }>()
 
 // 获取仪表盘统计数据
 app.get('/api/admin/stats', requireModeratorOrAdmin, async (c) => {

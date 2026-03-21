@@ -1,9 +1,9 @@
 import { Hono } from 'hono'
-import type { Env } from '../types'
-import { requireAdmin, requireModeratorOrAdmin, Permission } from '../middleware/permissions'
-import { createAuditLog } from '../utils/audit'
+import type { Env, Variables } from '../../types'
+import { requireAdmin, requireModeratorOrAdmin, Permission } from '../../middleware/permissions'
+import { createAuditLog } from '../../utils/audit'
 
-const app = new Hono<{ Bindings: Env }>()
+const app = new Hono<{ Bindings: Env; Variables: Variables }>()
 
 // 获取用户列表（分页、搜索、过滤）
 app.get('/api/admin/users', requireAdmin, async (c) => {

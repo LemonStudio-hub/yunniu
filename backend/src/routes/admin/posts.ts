@@ -1,9 +1,9 @@
 import { Hono } from 'hono'
-import type { Env } from '../../types'
+import type { Env, Variables } from '../../types'
 import { requireModeratorOrAdmin, Permission } from '../../middleware/permissions'
 import { createAuditLog } from '../../utils/audit'
 
-const app = new Hono<{ Bindings: Env }>()
+const app = new Hono<{ Bindings: Env; Variables: Variables }>()
 
 // 获取帖子列表（分页、搜索、过滤）
 app.get('/api/admin/posts', requireModeratorOrAdmin, async (c) => {
@@ -225,7 +225,7 @@ app.put('/api/admin/posts/:id/pin', requireModeratorOrAdmin, async (c) => {
         'SELECT COUNT(*) as count FROM posts WHERE pinned = 1 AND deleted_at IS NULL'
       ).first()
       
-      if ((pinnedCount?.count || 0) >= 5) {
+      if ((pinnedCount?.count as number || 0) >= 5) {
         return c.json({
           success: false,
           error: {
