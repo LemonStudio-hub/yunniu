@@ -44,7 +44,7 @@ export class PostService {
   }
 
   async findById(id: string): Promise<Post | null> {
-    return this.db.prepare('SELECT * FROM posts WHERE id = ? AND deleted_at IS NULL').bind(id).first<Post>()
+    return this.db.prepare('SELECT id, title, content, author_id, category_id, view_count, like_count, comment_count, created_at, updated_at FROM posts WHERE id = ? AND deleted_at IS NULL').bind(id).first<Post>()
   }
 
   async findAll(options: {
@@ -56,7 +56,7 @@ export class PostService {
     const { page = 1, limit = 20, category_id, author_id } = options
     const offset = (page - 1) * limit
 
-    let query = 'SELECT * FROM posts WHERE deleted_at IS NULL'
+    let query = 'SELECT id, title, content, author_id, category_id, view_count, like_count, comment_count, created_at, updated_at FROM posts WHERE deleted_at IS NULL'
     const params: any[] = []
 
     if (category_id) {
@@ -324,12 +324,12 @@ export class PostService {
   }
 
   async findCommentById(id: string): Promise<Comment | null> {
-    return this.db.prepare('SELECT * FROM comments WHERE id = ? AND deleted_at IS NULL').bind(id).first<Comment>()
+    return this.db.prepare('SELECT id, post_id, author_id, content, parent_id, like_count, created_at, updated_at FROM comments WHERE id = ? AND deleted_at IS NULL').bind(id).first<Comment>()
   }
 
   async findCommentsByPostId(postId: string): Promise<Comment[]> {
     const result = await this.db
-      .prepare('SELECT * FROM comments WHERE post_id = ? AND deleted_at IS NULL ORDER BY created_at ASC')
+      .prepare('SELECT id, post_id, author_id, content, parent_id, like_count, created_at, updated_at FROM comments WHERE post_id = ? AND deleted_at IS NULL ORDER BY created_at ASC')
       .bind(postId)
       .all<Comment>()
 

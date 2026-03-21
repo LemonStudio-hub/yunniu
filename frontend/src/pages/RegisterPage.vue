@@ -143,6 +143,7 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
 import { useUIStore } from '../stores/ui'
+import { apiClient } from '../api/client'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -185,39 +186,24 @@ async function handleSubmit() {
 
   loading.value = true
   try {
-    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787'}/api/auth/register`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        username: username.value,
-        email: email.value,
-        password: password.value,
-      }),
+    const data = await apiClient.post('/api/auth/register', {
+      username: username.value,
+      email: email.value,
+      password: password.value,
     })
-
-    if (response.ok) {
-      const data = await response.json()
-      userStore.setUser(data.user)
-      userStore.setToken(data.token)
-      uiStore.addNotification({
-        type: 'success',
-        title: '注册成功',
-        message: `欢迎加入云纽，${data.user.username}！`,
-      })
-      router.push('/')
-    } else {
-      const error = await response.json()
-      uiStore.addNotification({
-        type: 'error',
-        title: '注册失败',
-        message: error.error?.details || error.error?.message || '注册失败，请稍后重试',
-      })
-    }
-  } catch {
+    userStore.setUser(data.user)
+    userStore.setToken(data.token)
+    uiStore.addNotification({
+      type: 'success',
+      title: '注册成功',
+      message: `欢迎加入云纽，${data.user.username}！`,
+    })
+    router.push('/')
+  } catch (error: any) {
     uiStore.addNotification({
       type: 'error',
       title: '注册失败',
-      message: '网络错误，请稍后重试',
+      message: error?.error?.details || error?.error?.message || error?.message || '注册失败，请稍后重试',
     })
   } finally {
     loading.value = false

@@ -26,7 +26,6 @@ export const corsMiddleware = cors({
     try {
       // 如果没有 origin（例如同源请求或curl等工具），允许
       if (!origin) {
-        console.log('CORS: No origin provided, allowing request')
         return null
       }
 
@@ -36,10 +35,8 @@ export const corsMiddleware = cors({
 
       // 检查 origin 是否在允许列表中
       if (allowedOrigins.includes(origin)) {
-        console.log(`CORS: Origin ${origin} allowed (${environment} environment)`)
         return origin
       } else {
-        console.warn(`CORS: Origin ${origin} not in allowed list (${environment} environment)`)
         return undefined
       }
     } catch (error) {

@@ -86,7 +86,7 @@ export const useUIStore = defineStore('ui', () => {
         customColors.value = JSON.parse(savedColors)
         updateCSSColors()
       } catch (error) {
-        console.error('Failed to load custom colors:', error)
+        // Error handling is managed by the error handler
       }
     }
   }
