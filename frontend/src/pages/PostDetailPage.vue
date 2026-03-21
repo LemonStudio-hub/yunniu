@@ -92,6 +92,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../stores/user'
 import { usePostStore } from '../stores/post'
+import { apiClient } from '../api/client'
 import CommentList from '../components/CommentList.vue'
 
 const route = useRoute()
@@ -105,15 +106,13 @@ onMounted(async () => {
   const postId = route.params.id as string
   postStore.loading = true
   try {
-    const result = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787'}/api/posts/${postId}`)
-    const post = await result.json()
+    const post = await apiClient.get(`/api/posts/${postId}`)
     postStore.setCurrentPost(post)
 
-    const commentsResult = await fetch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8787'}/api/posts/${postId}/comments`)
-    const comments = await commentsResult.json()
+    const comments = await apiClient.get(`/api/posts/${postId}/comments`)
     postStore.setComments(comments)
   } catch (error) {
-    console.error('Failed to fetch post:', error)
+    // Error handling is managed by the error handler
   } finally {
     postStore.loading = false
   }

@@ -137,8 +137,6 @@ export function initJWT(secret: string): void {
     
     // 记录密钥强度信息
     const entropy = calculateEntropy(secret)
-    console.log(`JWT initialized with ${entropy.toFixed(2)} bits of entropy (length: ${secret.length})`)
-    
     JWT_SECRET = new TextEncoder().encode(secret)
   } catch (error) {
     console.error('Failed to initialize JWT:', error)

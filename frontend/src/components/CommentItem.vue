@@ -154,7 +154,7 @@ async function submitReply() {
     // 通知父组件刷新评论列表
     emit('replySuccess')
   } catch (error) {
-    console.error('回复失败:', error)
+    // Error handling is managed by the error handler
   } finally {
     isSubmitting.value = false
   }
