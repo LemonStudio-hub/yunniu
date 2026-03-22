@@ -15,6 +15,7 @@ export type Variables = {
   userId?: string
   currentUser?: any
   userRole?: string
+  codeAttachmentService?: any
 }
 
 export type AppContext = {

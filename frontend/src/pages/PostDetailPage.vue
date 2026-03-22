@@ -150,7 +150,7 @@ onMounted(async () => {
 
     // Load code attachments
     try {
-      const attachments = await apiClient.get(`/api/attachments/post/${postId}`)
+      const attachments = await apiClient.get(`/api/attachments/post/${postId}`) as CodeAttachment[]
       codeAttachments.value = attachments || []
     } catch (error) {
       // Ignore error if attachments endpoint doesn't exist yet

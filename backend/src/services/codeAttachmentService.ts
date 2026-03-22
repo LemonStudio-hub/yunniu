@@ -243,7 +243,7 @@ export class CodeAttachmentService {
       const review = await this.reviewModel.create({
         attachment_id: input.attachment_id,
         proposer_id: proposerId,
-        proposed_version,
+        proposed_version: proposedVersion,
         proposed_content: input.proposed_content,
         diff_content: diffContent
       })

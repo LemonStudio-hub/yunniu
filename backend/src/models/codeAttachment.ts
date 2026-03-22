@@ -71,7 +71,7 @@ export class CodeAttachmentModel {
     `).bind(input.content, newVersion, input.id).run()
 
     // 创建版本记录
-    await this.createVersion(input.id, newVersion, input.content, null, input.change_description)
+    await this.createVersion(input.id, newVersion, input.content, null, input.change_description || null)
 
     return this.findById(input.id)
   }

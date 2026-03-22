@@ -37,9 +37,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import type { CodeViewerProps } from '../types/code'
-import type { CodeAttachment } from '../types/code'
 
 const props = withDefaults(defineProps<CodeViewerProps>(), {
   initiallyCollapsed: true,

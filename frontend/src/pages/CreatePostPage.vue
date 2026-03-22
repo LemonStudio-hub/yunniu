@@ -160,7 +160,7 @@ async function handleSubmit() {
       content: content.value,
       categoryId: categoryId.value,
       tags,
-    })
+    }) as { id: string }
     
     postId.value = post.id
     
