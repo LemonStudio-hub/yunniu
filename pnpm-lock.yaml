@@ -273,6 +273,9 @@ importers:
 
   packages/shared-ui:
     dependencies:
+      '@cloudlink/shared-core':
+        specifier: workspace:*
+        version: link:../shared-core
       vue:
         specifier: ^3.5.30
         version: 3.5.30(typescript@5.9.3)
