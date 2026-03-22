@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import type { Env, Variables } from '../../types'
 import { requireAdmin, requireModeratorOrAdmin, Permission } from '../../middleware/permissions'
+import { csrfProtectionMiddleware } from '../../middleware/csrf'
 import { createAuditLog } from '../../utils/audit'
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>()
@@ -120,7 +121,7 @@ app.get('/api/admin/users/:id', requireAdmin, async (c) => {
 })
 
 // 更新用户角色
-app.put('/api/admin/users/:id/role', requireAdmin, async (c) => {
+app.put('/api/admin/users/:id/role', requireAdmin, csrfProtectionMiddleware, async (c) => {
   try {
     const { id } = c.req.param()
     const { role } = await c.req.json()
@@ -183,7 +184,7 @@ app.put('/api/admin/users/:id/role', requireAdmin, async (c) => {
 })
 
 // 封禁用户
-app.post('/api/admin/users/:id/ban', requireModeratorOrAdmin, async (c) => {
+app.post('/api/admin/users/:id/ban', requireModeratorOrAdmin, csrfProtectionMiddleware, async (c) => {
   try {
     const { id } = c.req.param()
     const { reason } = await c.req.json() || ''
@@ -245,7 +246,7 @@ app.post('/api/admin/users/:id/ban', requireModeratorOrAdmin, async (c) => {
 })
 
 // 解封用户
-app.post('/api/admin/users/:id/unban', requireModeratorOrAdmin, async (c) => {
+app.post('/api/admin/users/:id/unban', requireModeratorOrAdmin, csrfProtectionMiddleware, async (c) => {
   try {
     const { id } = c.req.param()
     const currentUser = c.get('currentUser')
@@ -295,7 +296,7 @@ app.post('/api/admin/users/:id/unban', requireModeratorOrAdmin, async (c) => {
 })
 
 // 永久删除用户
-app.delete('/api/admin/users/:id', requireAdmin, async (c) => {
+app.delete('/api/admin/users/:id', requireAdmin, csrfProtectionMiddleware, async (c) => {
   try {
     const { id } = c.req.param()
     const currentUser = c.get('currentUser')

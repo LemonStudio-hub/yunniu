@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import type { Env, Variables } from '../../types'
 import { requireModeratorOrAdmin, Permission } from '../../middleware/permissions'
+import { csrfProtectionMiddleware } from '../../middleware/csrf'
 import { createAuditLog } from '../../utils/audit'
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>()
@@ -81,7 +82,7 @@ app.get('/api/admin/posts', requireModeratorOrAdmin, async (c) => {
 })
 
 // 删除帖子（软删除）
-app.delete('/api/admin/posts/:id', requireModeratorOrAdmin, async (c) => {
+app.delete('/api/admin/posts/:id', requireModeratorOrAdmin, csrfProtectionMiddleware, async (c) => {
   try {
     const { id } = c.req.param()
     const { reason } = await c.req.json() || ''
@@ -149,7 +150,7 @@ app.delete('/api/admin/posts/:id', requireModeratorOrAdmin, async (c) => {
 })
 
 // 恢复帖子
-app.post('/api/admin/posts/:id/restore', requireModeratorOrAdmin, async (c) => {
+app.post('/api/admin/posts/:id/restore', requireModeratorOrAdmin, csrfProtectionMiddleware, async (c) => {
   try {
     const { id } = c.req.param()
     const currentUser = c.get('currentUser')
@@ -199,7 +200,7 @@ app.post('/api/admin/posts/:id/restore', requireModeratorOrAdmin, async (c) => {
 })
 
 // 置顶帖子
-app.put('/api/admin/posts/:id/pin', requireModeratorOrAdmin, async (c) => {
+app.put('/api/admin/posts/:id/pin', requireModeratorOrAdmin, csrfProtectionMiddleware, async (c) => {
   try {
     const { id } = c.req.param()
     const { pinned } = await c.req.json()
@@ -296,7 +297,7 @@ app.get('/api/admin/posts/pinned', requireModeratorOrAdmin, async (c) => {
 })
 
 // 更新置顶顺序
-app.put('/api/admin/posts/pinned/reorder', requireModeratorOrAdmin, async (c) => {
+app.put('/api/admin/posts/pinned/reorder', requireModeratorOrAdmin, csrfProtectionMiddleware, async (c) => {
   try {
     const { pinnedPosts } = await c.req.json()
     const currentUser = c.get('currentUser')

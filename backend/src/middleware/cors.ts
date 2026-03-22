@@ -16,6 +16,9 @@ const ALLOWED_ORIGINS = {
     'https://winuel.pages.dev',
     // 管理员后台域名
     'https://admin.winuel.com',
+    // 管理员后台实际部署域名（Cloudflare Pages）
+    'https://64229809.winuel-admin.pages.dev',
+    // 备用管理员后台域名（通用域名）
     'https://winuel-admin.pages.dev',
   ],
 }

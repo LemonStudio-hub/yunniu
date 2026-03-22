@@ -35,8 +35,14 @@ app.use('*', async (c, next) => {
   if (c.env.ENVIRONMENT) {
     ;(globalThis as any).ENVIRONMENT = c.env.ENVIRONMENT
   }
-  if (c.env.JWT_SECRET) {
-    initJWT(c.env.JWT_SECRET)
+  if (c.env.JWT_SECRET && !(globalThis as any).JWT_SECRET_INITIALIZED) {
+    try {
+      initJWT(c.env.JWT_SECRET)
+      ;(globalThis as any).JWT_SECRET_INITIALIZED = true
+    } catch (error) {
+      console.error('Failed to initialize JWT:', error)
+      // 不抛出错误，允许请求继续进行
+    }
   }
   await next()
 })

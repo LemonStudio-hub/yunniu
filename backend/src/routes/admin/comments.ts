@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import type { Env, Variables } from '../../types'
 import { requireModeratorOrAdmin } from '../../middleware/permissions'
+import { csrfProtectionMiddleware } from '../../middleware/csrf'
 import { createAuditLog } from '../../utils/audit'
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>()
@@ -74,7 +75,7 @@ app.get('/api/admin/comments', requireModeratorOrAdmin, async (c) => {
 })
 
 // 删除评论（软删除）
-app.delete('/api/admin/comments/:id', requireModeratorOrAdmin, async (c) => {
+app.delete('/api/admin/comments/:id', requireModeratorOrAdmin, csrfProtectionMiddleware, async (c) => {
   try {
     const { id } = c.req.param()
     const { reason } = await c.req.json() || ''
@@ -125,7 +126,7 @@ app.delete('/api/admin/comments/:id', requireModeratorOrAdmin, async (c) => {
 })
 
 // 恢复评论
-app.post('/api/admin/comments/:id/restore', requireModeratorOrAdmin, async (c) => {
+app.post('/api/admin/comments/:id/restore', requireModeratorOrAdmin, csrfProtectionMiddleware, async (c) => {
   try {
     const { id } = c.req.param()
     const currentUser = c.get('currentUser')
@@ -175,7 +176,7 @@ app.post('/api/admin/comments/:id/restore', requireModeratorOrAdmin, async (c) =
 })
 
 // 批量删除评论
-app.post('/api/admin/comments/batch-delete', requireModeratorOrAdmin, async (c) => {
+app.post('/api/admin/comments/batch-delete', requireModeratorOrAdmin, csrfProtectionMiddleware, async (c) => {
   try {
     const { ids, reason } = await c.req.json()
     const currentUser = c.get('currentUser')

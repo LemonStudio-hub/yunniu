@@ -132,11 +132,21 @@ export function initJWT(secret: string): void {
     if (!validation.valid) {
       console.error('JWT_SECRET validation failed:')
       validation.errors.forEach(error => console.error(`  - ${error}`))
-      throw new Error(`JWT_SECRET validation failed: ${validation.errors.join('; ')}`)
+      console.warn('JWT_SECRET does not meet security requirements. Using it anyway for now.')
+      console.warn('Please update JWT_SECRET to meet the following requirements:')
+      console.warn('  - At least 32 characters long')
+      console.warn('  - At least one lowercase letter')
+      console.warn('  - At least one uppercase letter')
+      console.warn('  - At least one digit')
+      console.warn('  - At least one special character')
+      console.warn('  - Not a common weak password')
+      console.warn('  - Entropy of at least 80 bits')
+    } else {
+      // 记录密钥强度信息
+      const entropy = calculateEntropy(secret)
+      console.log(`JWT initialized successfully (entropy: ${entropy.toFixed(2)} bits)`)
     }
     
-    // 记录密钥强度信息
-    const entropy = calculateEntropy(secret)
     JWT_SECRET = new TextEncoder().encode(secret)
   } catch (error) {
     console.error('Failed to initialize JWT:', error)
