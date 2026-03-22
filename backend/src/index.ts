@@ -24,6 +24,8 @@ import adminCommentsRouter from './routes/admin/comments'
 import adminAuditLogsRouter from './routes/admin/audit-logs'
 import adminStatsRouter from './routes/admin/stats'
 
+\n// Code attachment routes\nimport attachmentsRouter from "./routes/api/attachments"\nimport reviewsRouter from "./routes/api/reviews"
+
 // 初始化一次性邮箱检查器
 initEmailChecker(
   [...BLOCKLIST_DOMAINS],
@@ -76,6 +78,8 @@ app.route('/api/posts', postsRouter)
 app.route('/api/comments', commentsRouter)
 app.route('/api/categories', categoriesRouter)
 app.route('/api/notifications', notificationsRouter)
+napp.route('/api/attachments', attachmentsRouter)
+app.route('/api/reviews', reviewsRouter)
 
 // Admin routes - 使用管理员认证中间件
 // 需要为每个管理员路由添加认证中间件
