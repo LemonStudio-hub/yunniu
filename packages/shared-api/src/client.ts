@@ -200,6 +200,22 @@ export class ApiClient {
     return this.handleResponse(response)
   }
 
+  public async upload<T = unknown>(url: string, file: File, config?: AxiosRequestConfig): Promise<T> {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const uploadConfig: AxiosRequestConfig = {
+      ...config,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        ...config?.headers,
+      },
+    }
+
+    const response = await this.axiosInstance.post<ApiResponse<T>>(url, formData, uploadConfig)
+    return this.handleResponse(response)
+  }
+
   // ============================================================================
   // 响应处理
   // ============================================================================

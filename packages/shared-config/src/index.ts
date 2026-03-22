@@ -87,7 +87,7 @@ class ConfigManager {
                       'http://localhost:8787'
     
     // 根据 API 基础 URL 确定 CORS 允许的源
-    const allowedOrigins = this.getOriginsForApi(apiBaseUrl)
+    const allowedOrigins = this.getOriginsForApi()
     
     const config: Config = {
       ...defaultConfig,
@@ -118,7 +118,7 @@ class ConfigManager {
   /**
    * 获取允许的源列表（内部方法）
    */
-  private getOriginsForApi(apiBaseUrl: string): string[] {
+  private getOriginsForApi(): string[] {
     const origins: string[] = []
     
     // 添加当前域名
@@ -126,19 +126,21 @@ class ConfigManager {
       origins.push(window.location.origin)
     }
     
-    // 根据 API 基础 URL 添加相关域名
-    if (apiBaseUrl.includes('api.winuel.com')) {
-      origins.push('https://www.winuel.com')
-      origins.push('https://winuel.pages.dev')
-      origins.push('https://admin.winuel.com')
-      origins.push('https://64229809.winuel-admin.pages.dev')
-      origins.push('https://winuel-admin.pages.dev')
+    // 从环境变量读取 CORS 允许的源
+    const corsOrigins = (typeof import.meta !== 'undefined' && import.meta.env?.VITE_CORS_ORIGINS) ||
+                        (typeof process !== 'undefined' && process.env?.CORS_ORIGINS)
+    
+    if (corsOrigins) {
+      const originsList = corsOrigins.split(',').map((origin: string) => origin.trim())
+      origins.push(...originsList)
     }
     
     // 开发环境允许本地地址
     if (this.environment === 'development') {
       origins.push('http://localhost:5173')
       origins.push('http://127.0.0.1:5173')
+      origins.push('http://localhost:5174') // admin-pages
+      origins.push('http://127.0.0.1:5174')
       origins.push('http://localhost:8787')
       origins.push('http://127.0.0.1:8787')
     }
