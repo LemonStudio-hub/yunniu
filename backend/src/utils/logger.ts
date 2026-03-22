@@ -29,12 +29,24 @@ export interface LogEntry {
 }
 
 class Logger {
-  private readonly isDevelopment = import.meta.env.DEV
-  private readonly minLogLevel: LogLevel
+  private isDevelopment: boolean = false
+  private environment: string = 'production'
+  private minLogLevel: LogLevel
 
   constructor() {
-    // 根据环境设置最小日志级别
-    this.minLogLevel = this.isDevelopment ? LogLevel.DEBUG : LogLevel.INFO
+    this.minLogLevel = LogLevel.INFO
+  }
+
+  /**
+   * 初始化logger环境
+   */
+  static init(environment: string = 'production') {
+    const env = environment.toLowerCase()
+    if (instance) {
+      instance.isDevelopment = env === 'development' || env === 'dev'
+      instance.environment = environment
+      instance.minLogLevel = instance.isDevelopment ? LogLevel.DEBUG : LogLevel.INFO
+    }
   }
 
   private shouldLog(level: LogLevel): boolean {
@@ -117,5 +129,8 @@ class ChildLogger {
 }
 
 // 导出单例实例
-export const logger = new Logger()
+let instance: Logger | null = null
+export const logger: Logger = new Logger()
+instance = logger
+
 export default logger

@@ -1,3 +1,4 @@
+import { logger } from "../../utils/logger"
 import { Hono } from 'hono'
 import type { Env } from '../../types'
 import { requireAdmin } from '../../middleware/permissions'
@@ -91,8 +92,8 @@ app.get('/api/admin/audit-logs', requireAdmin, async (c) => {
         },
       },
     })
-  } catch (error) {
-    console.error('Failed to fetch audit logs:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to fetch audit logs:', error)
     return c.json({
       success: false,
       error: {
@@ -136,8 +137,8 @@ app.get('/api/admin/audit-logs/:id', requireAdmin, async (c) => {
         new_values: log.new_values ? JSON.parse(log.new_values) : null,
       },
     })
-  } catch (error) {
-    console.error('Failed to fetch audit log details:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to fetch audit log details:', error)
     return c.json({
       success: false,
       error: {
@@ -210,8 +211,8 @@ app.get('/api/admin/audit-logs/stats', requireAdmin, async (c) => {
         byUser: userStats.results,
       },
     })
-  } catch (error) {
-    console.error('Failed to fetch audit log stats:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to fetch audit log stats:', error)
     return c.json({
       success: false,
       error: {
@@ -296,8 +297,8 @@ app.get('/api/admin/audit-logs/export', requireAdmin, async (c) => {
         'Content-Disposition': `attachment; filename="audit-logs-${new Date().toISOString().split('T')[0]}.csv"`,
       },
     })
-  } catch (error) {
-    console.error('Failed to export audit logs:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to export audit logs:', error)
     return c.json({
       success: false,
       error: {

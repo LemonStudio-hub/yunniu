@@ -1,6 +1,7 @@
 import { Hono } from 'hono'
 import type { Env } from './types'
-import { initJWT } from './utils/jwt'
+import { initJWT } from "./utils/jwt"
+import { Logger } from "./utils/logger"
 import { initEmailChecker } from './utils/validation'
 import { corsMiddleware } from './middleware/cors'
 import { httpsRedirect, hsts } from './middleware/https'
@@ -37,6 +38,7 @@ app.use('*', async (c, next) => {
   }
   if (c.env.JWT_SECRET) {
     initJWT(c.env.JWT_SECRET)
+    Logger.init(c.env.ENVIRONMENT || "production")
   }
   await next()
 })
