@@ -1,3 +1,4 @@
+import { logger } from "../../utils/logger"
 import { Hono } from 'hono'
 import type { Env, Variables } from '../../types'
 import { requireModeratorOrAdmin, Permission } from '../../middleware/permissions'
@@ -69,8 +70,8 @@ app.get('/api/admin/posts', requireModeratorOrAdmin, async (c) => {
         },
       },
     })
-  } catch (error) {
-    console.error('Failed to fetch posts:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to fetch posts:', error)
     return c.json({
       success: false,
       error: {
@@ -137,8 +138,8 @@ app.delete('/api/admin/posts/:id', requireModeratorOrAdmin, csrfProtectionMiddle
       success: true,
       message: '帖子已删除',
     })
-  } catch (error) {
-    console.error('Failed to delete post:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to delete post:', error)
     return c.json({
       success: false,
       error: {
@@ -187,8 +188,8 @@ app.post('/api/admin/posts/:id/restore', requireModeratorOrAdmin, csrfProtection
       success: true,
       message: '帖子已恢复',
     })
-  } catch (error) {
-    console.error('Failed to restore post:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to restore post:', error)
     return c.json({
       success: false,
       error: {
@@ -255,8 +256,8 @@ app.put('/api/admin/posts/:id/pin', requireModeratorOrAdmin, csrfProtectionMiddl
       message: pinned ? '帖子已置顶' : '帖子已取消置顶',
       data: { id, pinned },
     })
-  } catch (error) {
-    console.error('Failed to pin post:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to pin post:', error)
     return c.json({
       success: false,
       error: {
@@ -284,8 +285,8 @@ app.get('/api/admin/posts/pinned', requireModeratorOrAdmin, async (c) => {
       success: true,
       data: pinnedPosts,
     })
-  } catch (error) {
-    console.error('Failed to fetch pinned posts:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to fetch pinned posts:', error)
     return c.json({
       success: false,
       error: {
@@ -332,8 +333,8 @@ app.put('/api/admin/posts/pinned/reorder', requireModeratorOrAdmin, csrfProtecti
       success: true,
       message: '置顶顺序已更新',
     })
-  } catch (error) {
-    console.error('Failed to reorder pinned posts:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to reorder pinned posts:', error)
     return c.json({
       success: false,
       error: {

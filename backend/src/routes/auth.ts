@@ -67,6 +67,10 @@ authRouter.post('/login', strictAuthRateLimit, async (c) => {
 
     const userService = new UserService(c.env.DB)
     const result = await userService.login({ email, password })
+    
+    // Set httpOnly cookie for enhanced security
+    c.header('Set-Cookie', `auth_token=${result.token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${7 * 24 * 60 * 60}`)
+    
     return c.json(result)
   } catch (error: any) {
     const errorInfo = handleError(error)
@@ -97,4 +101,9 @@ authRouter.post('/logout', authMiddleware, csrfProtectionMiddleware, async (c) =
   return c.json({ message: '退出成功' })
 })
 
-export default authRouter
+export default authRouter  } catch (error: unknown) {
+    const errorInfo = handleError(error)
+    const statusCode = error instanceof Error && 'statusCode' in error ? (error as any).statusCode : 401
+    return c.json(formatErrorResponse(errorInfo), statusCode)
+  }
+})

@@ -1,3 +1,5 @@
+import { logger } from "../../utils/logger"
+import { validatePagination, validateRole, validateId, validateSearch } from "../../utils/adminValidation"
 import { Hono } from 'hono'
 import type { Env, Variables } from '../../types'
 import { requireAdmin, requireModeratorOrAdmin, Permission } from '../../middleware/permissions'
@@ -59,8 +61,8 @@ app.get('/api/admin/users', requireAdmin, async (c) => {
         },
       },
     })
-  } catch (error) {
-    console.error('Failed to fetch users:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to fetch users:', error)
     return c.json({
       success: false,
       error: {
@@ -108,8 +110,8 @@ app.get('/api/admin/users/:id', requireAdmin, async (c) => {
         },
       },
     })
-  } catch (error) {
-    console.error('Failed to fetch user details:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to fetch user details:', error)
     return c.json({
       success: false,
       error: {
@@ -171,8 +173,8 @@ app.put('/api/admin/users/:id/role', requireAdmin, csrfProtectionMiddleware, asy
       message: '用户角色已更新',
       data: { id, role },
     })
-  } catch (error) {
-    console.error('Failed to update user role:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to update user role:', error)
     return c.json({
       success: false,
       error: {
@@ -233,8 +235,8 @@ app.post('/api/admin/users/:id/ban', requireModeratorOrAdmin, csrfProtectionMidd
       success: true,
       message: '用户已被封禁',
     })
-  } catch (error) {
-    console.error('Failed to ban user:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to ban user:', error)
     return c.json({
       success: false,
       error: {
@@ -283,8 +285,8 @@ app.post('/api/admin/users/:id/unban', requireModeratorOrAdmin, csrfProtectionMi
       success: true,
       message: '用户已解封',
     })
-  } catch (error) {
-    console.error('Failed to unban user:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to unban user:', error)
     return c.json({
       success: false,
       error: {
@@ -342,8 +344,8 @@ app.delete('/api/admin/users/:id', requireAdmin, csrfProtectionMiddleware, async
       success: true,
       message: '用户已永久删除',
     })
-  } catch (error) {
-    console.error('Failed to delete user:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to delete user:', error)
     return c.json({
       success: false,
       error: {

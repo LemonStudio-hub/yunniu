@@ -1,3 +1,4 @@
+import { logger } from "../../utils/logger"
 import { Hono } from 'hono'
 import type { Env, Variables } from '../../types'
 import { requireModeratorOrAdmin } from '../../middleware/permissions'
@@ -84,8 +85,8 @@ app.get('/api/admin/stats', requireModeratorOrAdmin, async (c) => {
         },
       },
     })
-  } catch (error) {
-    console.error('Failed to fetch dashboard stats:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to fetch dashboard stats:', error)
     return c.json({
       success: false,
       error: {
@@ -145,8 +146,8 @@ app.get('/api/admin/stats/recent-activity', requireModeratorOrAdmin, async (c) =
         comments: recentComments.results,
       },
     })
-  } catch (error) {
-    console.error('Failed to fetch recent activity:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to fetch recent activity:', error)
     return c.json({
       success: false,
       error: {
@@ -220,8 +221,8 @@ app.get('/api/admin/stats/trends', requireModeratorOrAdmin, async (c) => {
         comments: fillData(commentTrends.results, dates),
       },
     })
-  } catch (error) {
-    console.error('Failed to fetch trends:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to fetch trends:', error)
     return c.json({
       success: false,
       error: {
@@ -283,8 +284,8 @@ app.get('/api/admin/stats/popular', requireModeratorOrAdmin, async (c) => {
         activeUsers: activeUsers.results,
       },
     })
-  } catch (error) {
-    console.error('Failed to fetch popular content:', error)
+  } catch (error: unknown) {
+    logger.error('Failed to fetch popular content:', error)
     return c.json({
       success: false,
       error: {
