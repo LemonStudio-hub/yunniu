@@ -1,0 +1,105 @@
+/**
+ * CloudLink 服务注册器
+ * 负责注册所有服务和依赖
+ */
+
+import { DIContainer, DEPENDENCY_TOKENS } from './di'
+import { UserService } from '../services/userService'
+import { PostService } from '../services/postService'
+import { CategoryService } from '../services/categoryService'
+import { NotificationService } from '../services/notificationService'
+import { AuditService } from '../services/auditService'
+
+export type Env = {
+  DB: D1Database
+  KV: KVNamespace
+  R2?: R2Bucket
+  JWT_SECRET?: string
+  ENVIRONMENT?: string
+}
+
+/**
+ * 初始化服务容器
+ */
+export function initializeServices(env: Env): DIContainer {
+  const container = new DIContainer()
+
+  // 注册环境依赖（瞬态，每次请求都获取最新的环境）
+  container.registerTransient(DEPENDENCY_TOKENS.DB, () => env.DB)
+  container.registerTransient(DEPENDENCY_TOKENS.KV, () => env.KV)
+  container.registerTransient(DEPENDENCY_TOKENS.R2, () => env.R2)
+  container.registerTransient(DEPENDENCY_TOKENS.ENV, () => env)
+
+  // 注册 JWT 密钥（瞬态，允许动态更新）
+  container.registerTransient(DEPENDENCY_TOKENS.JWT_SECRET, () => env.JWT_SECRET)
+
+  // 注册服务（瞬态，每次请求创建新实例以避免状态污染）
+  container.registerTransient(DEPENDENCY_TOKENS.USER_SERVICE, (c) => {
+    const db = c.resolve<D1Database>(DEPENDENCY_TOKENS.DB)
+    return new UserService(db)
+  })
+
+  container.registerTransient(DEPENDENCY_TOKENS.POST_SERVICE, (c) => {
+    const db = c.resolve<D1Database>(DEPENDENCY_TOKENS.DB)
+    return new PostService(db)
+  })
+
+  container.registerTransient(DEPENDENCY_TOKENS.CATEGORY_SERVICE, (c) => {
+    const db = c.resolve<D1Database>(DEPENDENCY_TOKENS.DB)
+    return new CategoryService(db)
+  })
+
+  container.registerTransient(DEPENDENCY_TOKENS.NOTIFICATION_SERVICE, (c) => {
+    const db = c.resolve<D1Database>(DEPENDENCY_TOKENS.DB)
+    return new NotificationService(db)
+  })
+
+  container.registerTransient(DEPENDENCY_TOKENS.AUDIT_SERVICE, (c) => {
+    const db = c.resolve<D1Database>(DEPENDENCY_TOKENS.DB)
+    return new AuditService(db)
+  })
+
+  return container
+}
+
+/**
+ * 获取服务（辅助函数）
+ */
+export function getService<T>(container: DIContainer, token: string): T {
+  return container.resolve<T>(token)
+}
+
+/**
+ * 获取用户服务
+ */
+export function getUserService(container: DIContainer): UserService {
+  return getService<UserService>(container, DEPENDENCY_TOKENS.USER_SERVICE)
+}
+
+/**
+ * 获取帖子服务
+ */
+export function getPostService(container: DIContainer): PostService {
+  return getService<PostService>(container, DEPENDENCY_TOKENS.POST_SERVICE)
+}
+
+/**
+ * 获取分类服务
+ */
+export function getCategoryService(container: DIContainer): CategoryService {
+  return getService<CategoryService>(container, DEPENDENCY_TOKENS.CATEGORY_SERVICE)
+}
+
+/**
+ * 获取通知服务
+ */
+export function getNotificationService(container: DIContainer): NotificationService {
+  return getService<NotificationService>(container, DEPENDENCY_TOKENS.NOTIFICATION_SERVICE)
+}
+
+/**
+ * 获取审计服务
+ */
+export function getAuditService(container: DIContainer): AuditService {
+  return getService<AuditService>(container, DEPENDENCY_TOKENS.AUDIT_SERVICE)
+}

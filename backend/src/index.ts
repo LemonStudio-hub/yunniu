@@ -9,6 +9,7 @@ import { auditLog } from './middleware/audit'
 import { csrfMiddleware, csrfProtectionMiddleware } from './middleware/csrf'
 import { normalRateLimit } from './middleware/rateLimit'
 import { userAuthMiddleware, adminAuthMiddleware } from './middleware/auth'
+import { diMiddleware } from './middleware/di'
 import { handleError, formatErrorResponse, logError } from './utils/errorHandler'
 import { BLOCKLIST_DOMAINS, ALLOWLIST_DOMAINS } from './data/blocklist'
 import authRouter from './routes/auth'
@@ -54,6 +55,7 @@ app.use('*', async (c, next) => {
 
 app.use('*', normalRateLimit)
 app.use('*', corsMiddleware)
+app.use('*', diMiddleware)
 app.use('*', auditLog)
 app.use('*', httpsRedirect)
 app.use('*', hsts)
