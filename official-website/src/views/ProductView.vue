@@ -109,16 +109,16 @@ onMounted(() => {
     <!-- Features Grid -->
     <section class="section bg-white">
       <div class="container">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
           <div
             v-for="(feature, index) in features"
             :key="feature.title"
-            class="card p-8 hover:shadow-2xl transition-all hover:-translate-y-1 animate-on-scroll"
+            class="card p-6 md:p-8 hover:shadow-2xl transition-all hover:-translate-y-1 animate-on-scroll"
             :style="{ animationDelay: `${index * 0.1}s` }"
           >
-            <div class="text-5xl mb-4">{{ feature.icon }}</div>
-            <h3 class="text-xl font-bold mb-3">{{ feature.title }}</h3>
-            <p class="text-gray-600">{{ feature.description }}</p>
+            <div class="text-4xl md:text-5xl mb-4">{{ feature.icon }}</div>
+            <h3 class="text-lg md:text-xl font-bold mb-3">{{ feature.title }}</h3>
+            <p class="text-gray-600 text-sm md:text-base">{{ feature.description }}</p>
           </div>
         </div>
       </div>

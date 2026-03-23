@@ -70,39 +70,39 @@ onMounted(() => {
     <Header />
 
     <!-- Hero Section -->
-    <section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 via-white to-primary-50">
+    <section class="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-50 via-white to-primary-50 pt-16">
       <!-- Background decoration -->
       <div class="absolute inset-0 overflow-hidden">
-        <div class="absolute -top-40 -right-40 w-80 h-80 bg-primary-200 rounded-full blur-3xl opacity-30 animate-float"></div>
-        <div class="absolute -bottom-40 -left-40 w-80 h-80 bg-secondary-200 rounded-full blur-3xl opacity-30 animate-float" style="animation-delay: 1s;"></div>
+        <div class="absolute -top-20 -right-20 w-60 h-60 md:w-80 md:h-80 bg-primary-200 rounded-full blur-3xl opacity-30 animate-float"></div>
+        <div class="absolute -bottom-20 -left-20 w-60 h-60 md:w-80 md:h-80 bg-secondary-200 rounded-full blur-3xl opacity-30 animate-float" style="animation-delay: 1s;"></div>
       </div>
 
       <div class="container relative z-10">
-        <div class="max-w-4xl mx-auto text-center">
+        <div class="max-w-4xl mx-auto text-center px-4">
           <div class="animate-fade-up">
-            <div class="inline-flex items-center px-4 py-2 rounded-full bg-primary-50 text-primary-600 font-medium mb-8">
+            <div class="inline-flex items-center px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-primary-50 text-primary-600 font-medium mb-6 md:mb-8 text-sm md:text-base">
               <span class="w-2 h-2 rounded-full bg-primary-500 mr-2 animate-pulse"></span>
               v0.1.0-beta 现已发布
             </div>
             
-            <h1 class="text-5xl md:text-7xl font-bold mb-8 leading-tight">
+            <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 md:mb-8 leading-tight">
               <span class="gradient-text">现代化论坛系统</span>
-              <br>
+              <br class="hidden sm:block">
               <span class="text-gray-900">重新定义社区交流</span>
             </h1>
             
-            <p class="text-xl md:text-2xl text-gray-600 mb-12 max-w-2xl mx-auto leading-relaxed">
+            <p class="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 mb-8 md:mb-12 max-w-2xl mx-auto leading-relaxed px-4">
               基于 Cloudflare Workers 构建，提供<span class="text-primary-500 font-semibold">高性能</span>、<span class="text-secondary-500 font-semibold">低成本</span>、<span class="text-primary-500 font-semibold">易部署</span>的现代化论坛解决方案
             </p>
             
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-              <CTAButton href="https://forum.winuel.com" size="lg" variant="primary">
+            <div class="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center px-4">
+              <CTAButton href="https://forum.winuel.com" size="md" variant="primary" class="w-full sm:w-auto">
                 访问论坛
                 <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
                 </svg>
               </CTAButton>
-              <CTAButton to="/product" size="lg" variant="secondary">
+              <CTAButton to="/product" size="md" variant="secondary" class="w-full sm:w-auto">
                 了解更多
               </CTAButton>
             </div>
@@ -111,7 +111,7 @@ onMounted(() => {
       </div>
 
       <!-- Scroll indicator -->
-      <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+      <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce hidden md:block">
         <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
         </svg>

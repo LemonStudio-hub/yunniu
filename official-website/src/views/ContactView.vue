@@ -96,13 +96,13 @@ onMounted(() => {
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
             <!-- Contact Form -->
             <div class="animate-on-scroll">
-              <h2 class="text-3xl font-bold mb-8 gradient-text">发送消息</h2>
+              <h2 class="text-2xl md:text-3xl font-bold mb-6 md:mb-8 gradient-text">发送消息</h2>
               
-              <div v-if="submitSuccess" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700">
+              <div v-if="submitSuccess" class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-700 text-sm md:text-base">
                 ✅ 消息发送成功！我们会尽快回复您。
               </div>
               
-              <form @submit.prevent="handleSubmit" class="space-y-6">
+              <form @submit.prevent="handleSubmit" class="space-y-4 md:space-y-6">
                 <div>
                   <label for="name" class="block text-sm font-medium text-gray-700 mb-2">姓名</label>
                   <input
@@ -110,7 +110,7 @@ onMounted(() => {
                     v-model="form.name"
                     type="text"
                     required
-                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-base"
                     placeholder="您的姓名"
                   />
                 </div>
@@ -122,7 +122,7 @@ onMounted(() => {
                     v-model="form.email"
                     type="email"
                     required
-                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-base"
                     placeholder="your@email.com"
                   />
                 </div>
@@ -133,7 +133,7 @@ onMounted(() => {
                     id="subject"
                     v-model="form.subject"
                     required
-                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-base"
                   >
                     <option value="">选择主题</option>
                     <option value="general">一般咨询</option>
@@ -151,7 +151,7 @@ onMounted(() => {
                     v-model="form.message"
                     required
                     rows="5"
-                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none"
+                    class="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all resize-none text-base"
                     placeholder="请输入您的消息..."
                   ></textarea>
                 </div>

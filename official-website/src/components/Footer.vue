@@ -30,31 +30,31 @@ const social = [
 <template>
   <footer class="bg-gray-900 text-gray-400">
     <div class="container">
-      <div class="py-16">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12">
+      <div class="py-12 md:py-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12">
           <!-- Brand -->
           <div class="lg:col-span-1">
-            <RouterLink to="/" class="flex items-center space-x-3 mb-6">
-              <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center">
-                <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <RouterLink to="/" class="flex items-center space-x-2 md:space-x-3 mb-4 md:mb-6">
+              <div class="w-9 h-9 md:w-10 md:h-10 rounded-xl bg-gradient-to-br from-primary-500 to-secondary-500 flex items-center justify-center">
+                <svg class="w-5 h-5 md:w-6 md:h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M12 2L2 7l10 5 10-5-10-5z"/>
                   <path d="M2 17l10 5 10-5"/>
                   <path d="M2 12l10 5 10-5"/>
                 </svg>
               </div>
-              <span class="text-2xl font-bold text-white">CloudLink</span>
+              <span class="text-xl md:text-2xl font-bold text-white">CloudLink</span>
             </RouterLink>
-            <p class="text-sm leading-relaxed mb-6">
+            <p class="text-sm leading-relaxed mb-4 md:mb-6">
               现代化的轻量级论坛系统，基于 Cloudflare Workers 构建，提供高性能、低成本、易部署的解决方案。
             </p>
-            <div class="flex space-x-4">
+            <div class="flex space-x-3">
               <a
                 v-for="item in social"
                 :key="item.name"
                 :href="item.href"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="w-10 h-10 rounded-lg bg-gray-800 flex items-center justify-center hover:bg-primary-500 transition-colors"
+                class="w-10 h-10 md:w-10 md:h-10 rounded-lg bg-gray-800 flex items-center justify-center hover:bg-primary-500 transition-colors active:scale-95"
                 :aria-label="item.name"
               >
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -66,13 +66,13 @@ const social = [
 
           <!-- Product Links -->
           <div>
-            <h3 class="text-white font-semibold mb-6">产品</h3>
-            <ul class="space-y-4">
+            <h3 class="text-white font-semibold mb-4 md:mb-6 text-base md:text-lg">产品</h3>
+            <ul class="space-y-3 md:space-y-4">
               <li v-for="link in links.product" :key="link.name">
                 <RouterLink
                   v-if="!link.external"
                   :to="link.href"
-                  class="hover:text-white transition-colors"
+                  class="hover:text-white transition-colors py-2 inline-block text-sm md:text-base"
                 >
                   {{ link.name }}
                 </RouterLink>
@@ -81,7 +81,7 @@ const social = [
                   :href="link.href"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="hover:text-white transition-colors"
+                  class="hover:text-white transition-colors py-2 inline-block text-sm md:text-base"
                 >
                   {{ link.name }}
                 </a>
@@ -91,12 +91,12 @@ const social = [
 
           <!-- Company Links -->
           <div>
-            <h3 class="text-white font-semibold mb-6">公司</h3>
-            <ul class="space-y-4">
+            <h3 class="text-white font-semibold mb-4 md:mb-6 text-base md:text-lg">公司</h3>
+            <ul class="space-y-3 md:space-y-4">
               <li v-for="link in links.company" :key="link.name">
                 <RouterLink
                   :to="link.href"
-                  class="hover:text-white transition-colors"
+                  class="hover:text-white transition-colors py-2 inline-block text-sm md:text-base"
                 >
                   {{ link.name }}
                 </RouterLink>
@@ -106,14 +106,14 @@ const social = [
 
           <!-- Resources Links -->
           <div>
-            <h3 class="text-white font-semibold mb-6">资源</h3>
-            <ul class="space-y-4">
+            <h3 class="text-white font-semibold mb-4 md:mb-6 text-base md:text-lg">资源</h3>
+            <ul class="space-y-3 md:space-y-4">
               <li v-for="link in links.resources" :key="link.name">
                 <a
                   :href="link.href"
                   target="_blank"
                   rel="noopener noreferrer"
-                  class="hover:text-white transition-colors"
+                  class="hover:text-white transition-colors py-2 inline-block text-sm md:text-base"
                 >
                   {{ link.name }}
                 </a>
@@ -124,15 +124,15 @@ const social = [
       </div>
 
       <!-- Bottom Bar -->
-      <div class="border-t border-gray-800 py-8">
-        <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <p class="text-sm">
+      <div class="border-t border-gray-800 py-6 md:py-8">
+        <div class="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0 text-sm">
+          <p class="text-center md:text-left">
             © {{ currentYear }} Lemon Studio. All rights reserved.
           </p>
-          <div class="flex space-x-6 text-sm">
-            <a href="#" class="hover:text-white transition-colors">隐私政策</a>
-            <a href="#" class="hover:text-white transition-colors">服务条款</a>
-            <a href="#" class="hover:text-white transition-colors">Cookie 政策</a>
+          <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-6 text-center md:text-left">
+            <a href="#" class="hover:text-white transition-colors py-1">隐私政策</a>
+            <a href="#" class="hover:text-white transition-colors py-1">服务条款</a>
+            <a href="#" class="hover:text-white transition-colors py-1">Cookie 政策</a>
           </div>
         </div>
       </div>

@@ -96,35 +96,35 @@ onMounted(() => {
     <section class="section bg-white">
       <div class="container">
         <div class="max-w-6xl mx-auto">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div class="animate-on-scroll">
-              <h2 class="text-4xl font-bold mb-6 gradient-text">我们的使命</h2>
-              <p class="text-lg text-gray-600 leading-relaxed mb-6">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-12 lg:gap-16 items-center">
+            <div class="animate-on-scroll order-2 lg:order-1">
+              <div class="aspect-square md:aspect-auto md:h-80 lg:h-96 bg-gradient-to-br from-primary-100 to-secondary-100 rounded-3xl flex items-center justify-center">
+                <div class="text-7xl md:text-8xl lg:text-9xl">🎯</div>
+              </div>
+            </div>
+            <div class="animate-on-scroll order-1 lg:order-2">
+              <h2 class="text-3xl md:text-4xl font-bold mb-4 md:mb-6 gradient-text">我们的使命</h2>
+              <p class="text-base md:text-lg text-gray-600 leading-relaxed mb-6">
                 我们的使命是让每个社区都能轻松拥有自己的论坛系统。通过现代化的技术栈和创新的架构设计，我们致力于：
               </p>
-              <ul class="space-y-4">
+              <ul class="space-y-3 md:space-y-4">
                 <li class="flex items-start">
-                  <span class="w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center mr-3 mt-1 flex-shrink-0">✓</span>
-                  <span class="text-gray-700">降低社区建设的技术门槛和成本</span>
+                  <span class="w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center mr-3 mt-0.5 md:mt-1 flex-shrink-0 text-sm">✓</span>
+                  <span class="text-gray-700 text-sm md:text-base">降低社区建设的技术门槛和成本</span>
                 </li>
                 <li class="flex items-start">
-                  <span class="w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center mr-3 mt-1 flex-shrink-0">✓</span>
-                  <span class="text-gray-700">提供卓越的用户体验和性能表现</span>
+                  <span class="w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center mr-3 mt-0.5 md:mt-1 flex-shrink-0 text-sm">✓</span>
+                  <span class="text-gray-700 text-sm md:text-base">提供卓越的用户体验和性能表现</span>
                 </li>
                 <li class="flex items-start">
-                  <span class="w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center mr-3 mt-1 flex-shrink-0">✓</span>
-                  <span class="text-gray-700">构建开放、活跃的开发者社区</span>
+                  <span class="w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center mr-3 mt-0.5 md:mt-1 flex-shrink-0 text-sm">✓</span>
+                  <span class="text-gray-700 text-sm md:text-base">构建开放、活跃的开发者社区</span>
                 </li>
                 <li class="flex items-start">
-                  <span class="w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center mr-3 mt-1 flex-shrink-0">✓</span>
-                  <span class="text-gray-700">持续创新，引领论坛系统的发展方向</span>
+                  <span class="w-6 h-6 rounded-full bg-primary-100 text-primary-600 flex items-center justify-center mr-3 mt-0.5 md:mt-1 flex-shrink-0 text-sm">✓</span>
+                  <span class="text-gray-700 text-sm md:text-base">持续创新，引领论坛系统的发展方向</span>
                 </li>
               </ul>
-            </div>
-            <div class="relative animate-on-scroll">
-              <div class="aspect-square bg-gradient-to-br from-primary-100 to-secondary-100 rounded-3xl flex items-center justify-center">
-                <div class="text-9xl">🎯</div>
-              </div>
             </div>
           </div>
         </div>
@@ -134,22 +134,22 @@ onMounted(() => {
     <!-- Team Section -->
     <section id="team" class="section bg-gradient-to-br from-gray-50 to-white">
       <div class="container">
-        <div class="text-center mb-16 animate-on-scroll">
+        <div class="text-center mb-12 md:mb-16 animate-on-scroll">
           <h2 class="section-title gradient-text">核心团队</h2>
           <p class="section-subtitle">汇聚各领域专家，共同打造卓越产品</p>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
           <div
             v-for="(member, index) in team"
             :key="member.name"
-            class="card p-6 text-center animate-on-scroll"
+            class="card p-6 md:p-8 text-center animate-on-scroll"
             :style="{ animationDelay: `${index * 0.1}s` }"
           >
-            <div class="text-6xl mb-4">{{ member.image }}</div>
-            <h3 class="text-xl font-bold mb-2">{{ member.name }}</h3>
-            <p class="text-primary-500 font-medium mb-3">{{ member.role }}</p>
-            <p class="text-gray-600 text-sm">{{ member.description }}</p>
+            <div class="text-5xl md:text-6xl mb-4">{{ member.image }}</div>
+            <h3 class="text-lg md:text-xl font-bold mb-2">{{ member.name }}</h3>
+            <p class="text-primary-500 font-medium mb-3 text-sm md:text-base">{{ member.role }}</p>
+            <p class="text-gray-600 text-xs md:text-sm">{{ member.description }}</p>
           </div>
         </div>
       </div>
