@@ -26,7 +26,7 @@ function getAllowedOrigins(environment: string, env?: any): string[] {
 
 // 需要移除的域名（仅供参考，不要添加到允许列表）
 // ❌ https://api.winuel.com - 后端 API 不应在前端允许列表中
-// ❌ https://cloudlink.lemonhub.workers.dev - 测试环境域名不应在生产环境
+// ❌ https://www.winuel.com - 生产环境域名
 
 export const corsMiddleware = cors({
   origin: (origin: string | null, c: any) => {
