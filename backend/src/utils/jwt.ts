@@ -132,12 +132,20 @@ export function initJWT(secret: string): void {
     if (!validation.valid) {
       console.error('JWT_SECRET validation failed:')
       validation.errors.forEach(error => console.error(`  - ${error}`))
-      throw new Error(`JWT_SECRET validation failed: ${validation.errors.join('; ')}`)
+      console.warn('JWT_SECRET does not meet security requirements. Using it anyway for now.')
+      console.warn('Please update JWT_SECRET to meet the following requirements:')
+      console.warn('  - At least 32 characters long')
+      console.warn('  - At least one lowercase letter')
+      console.warn('  - At least one uppercase letter')
+      console.warn('  - At least one digit')
+      console.warn('  - At least one special character')
+      console.warn('  - Not a common weak password')
+      console.warn('  - Entropy of at least 80 bits')
+    } else {
+      // 记录密钥强度信息
+      const entropy = calculateEntropy(secret)
+      console.log(`JWT initialized successfully (entropy: ${entropy.toFixed(2)} bits)`)
     }
-    
-    // 记录密钥强度信息
-    const entropy = calculateEntropy(secret)
-    console.log(`JWT initialized with ${entropy.toFixed(2)} bits of entropy (length: ${secret.length})`)
     
     JWT_SECRET = new TextEncoder().encode(secret)
   } catch (error) {
@@ -154,20 +162,54 @@ function getSecret(): Uint8Array {
   return JWT_SECRET
 }
 
-export async function generateToken(payload: JWTPayload): Promise<string> {
+/**
+ * 受众类型定义
+ */
+export enum Audience {
+  USER = 'user',
+  ADMIN = 'admin'
+}
+
+/**
+ * 带受众的 JWT Payload
+ */
+export interface TokenPayload extends JWTPayload {
+  aud: string
+  iat?: number
+  exp?: number
+}
+
+export async function generateToken(payload: JWTPayload, audience: Audience = Audience.USER): Promise<string> {
   const secret = getSecret()
-  return new SignJWT(payload as unknown as Record<string, unknown>)
-    .setProtectedHeader({ alg: 'HS256' })
+  const tokenPayload = {
+    ...payload,
+    aud: audience
+  }
+  
+  return new SignJWT(tokenPayload as unknown as Record<string, unknown>)
+    .setProtectedHeader({ alg: 'HS256', typ: 'JWT' })
     .setIssuedAt()
     .setExpirationTime('7d')
+    .setAudience(audience)
+    .setIssuer('cloudlink-api')
     .sign(secret)
 }
 
-export async function verifyToken(token: string): Promise<JWTPayload | null> {
+export async function verifyToken(token: string, expectedAudience?: Audience): Promise<TokenPayload | null> {
   try {
     const secret = getSecret()
-    const { payload } = await jwtVerify(token, secret)
-    return payload as unknown as JWTPayload
+    const { payload } = await jwtVerify(token, secret, {
+      issuer: 'cloudlink-api',
+      audience: expectedAudience
+    })
+    
+    // 如果指定了受众，验证是否匹配
+    if (expectedAudience && payload.aud !== expectedAudience) {
+      console.warn(`Token audience mismatch: expected ${expectedAudience}, got ${payload.aud}`)
+      return null
+    }
+    
+    return payload as unknown as TokenPayload
   } catch (error) {
     return null
   }

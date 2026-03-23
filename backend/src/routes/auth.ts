@@ -51,7 +51,6 @@ authRouter.post('/register', strictAuthRateLimit, async (c) => {
     const result = await userService.create({ username, email, password })
     return c.json(result)
   } catch (error: any) {
-    console.error('Registration error:', error)
     const errorInfo = handleError(error)
     const statusCode = error instanceof Error && 'statusCode' in error ? (error as any).statusCode : 500
     return c.json(formatErrorResponse(errorInfo), statusCode)
@@ -68,6 +67,35 @@ authRouter.post('/login', strictAuthRateLimit, async (c) => {
 
     const userService = new UserService(c.env.DB)
     const result = await userService.login({ email, password })
+    
+    // Set httpOnly cookie for enhanced security
+    c.header('Set-Cookie', `auth_token=${result.token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${7 * 24 * 60 * 60}`)
+    
+    return c.json(result)
+  } catch (error: any) {
+    const errorInfo = handleError(error)
+    const statusCode = error instanceof Error && 'statusCode' in error ? (error as any).statusCode : 401
+    return c.json(formatErrorResponse(errorInfo), statusCode)
+  }
+})
+
+/**
+ * 管理员登录端点 - 返回 ADMIN 受众的令牌
+ */
+authRouter.post('/admin/login', strictAuthRateLimit, async (c) => {
+  try {
+    const { email, password } = await c.req.json()
+
+    if (!email || !password) {
+      throw createError.missingField('email, password are required')
+    }
+
+    const userService = new UserService(c.env.DB)
+    const result = await userService.adminLogin({ email, password })
+    
+    // Set httpOnly cookie for enhanced security
+    c.header('Set-Cookie', `admin_token=${result.token}; Path=/; HttpOnly; Secure; SameSite=Strict; Max-Age=${7 * 24 * 60 * 60}`)
+    
     return c.json(result)
   } catch (error: any) {
     const errorInfo = handleError(error)
