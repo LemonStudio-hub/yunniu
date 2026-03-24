@@ -5,7 +5,7 @@ import { createMockD1Database } from '../helpers/db'
 import { initJWT, generateToken, Audience } from '../../utils/jwt'
 import type { Env, Variables } from '../../types'
 import { PostService } from '../../services/postService'
-import { DEPENDENCY_TOKENS } from '../../utils/di'
+import { DEPENDENCY_TOKENS, DIContainer } from '../../utils/di'
 import { csrfStore, createCSRFHeaders } from '../helpers/test-utils'
 
 describe('Posts Router', () => {
@@ -38,9 +38,8 @@ describe('Posts Router', () => {
     // Set up dependency injection container after middleware
     app.use('*', async (c, next) => {
       // Set up dependency injection container for each request
-      const container = new Map()
-      const postService = new PostService(c.env.DB)
-      container.set(DEPENDENCY_TOKENS.POST_SERVICE, postService)
+      const container = new DIContainer()
+      container.registerSingleton(DEPENDENCY_TOKENS.POST_SERVICE, () => new PostService(c.env.DB))
       c.set('container', container)
       await next()
     })
