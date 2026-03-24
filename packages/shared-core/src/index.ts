@@ -51,6 +51,8 @@ export interface Post {
   commentCount: number
   isLiked?: boolean
   isPinned?: boolean
+  auditStatus?: AuditStatus
+  auditReason?: string
   createdAt: string
   updatedAt: string
 }
@@ -60,6 +62,18 @@ export interface PostInput {
   content: string
   categoryId: string
   tags?: string[]
+}
+
+export type AuditStatus = 'pending' | 'approved' | 'rejected';
+
+export interface AuditLog {
+  id: string
+  userId: string
+  action: string
+  details?: Record<string, any>
+  ip?: string
+  userAgent?: string
+  createdAt: string
 }
 
 export interface PostUpdate {

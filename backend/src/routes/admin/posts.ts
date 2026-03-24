@@ -4,6 +4,7 @@ import type { Env, Variables } from '../../types'
 import { requireModeratorOrAdmin, Permission } from '../../middleware/permissions'
 import { csrfProtectionMiddleware } from '../../middleware/csrf'
 import { createAuditLog } from '../../utils/audit'
+import { generateId } from "../../utils/crypto"
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>()
 
@@ -346,3 +347,179 @@ app.put('/api/admin/posts/pinned/reorder', requireModeratorOrAdmin, csrfProtecti
 })
 
 export default app
+
+// ============================================================================
+// 审核相关路由
+// ============================================================================
+
+// 获取待审核帖子列表
+app.get('/api/admin/posts/pending', requireModeratorOrAdmin, async (c) => {
+  try {
+    const { page = '1', pageSize = '20' } = c.req.query()
+    const pageNum = parseInt(page as string)
+    const size = parseInt(pageSize as string)
+    const offset = (pageNum - 1) * size
+
+    const query = `
+      SELECT 
+        p.id, p.title, p.content, p.author_id, p.category_id, p.audit_status, p.audit_reason,
+        p.view_count, p.like_count, p.comment_count, p.created_at, p.updated_at,
+        u.username as author_username, u.email as author_email,
+        c.name as category_name
+      FROM posts p
+      LEFT JOIN users u ON p.author_id = u.id
+      LEFT JOIN categories c ON p.category_id = c.id
+      WHERE p.audit_status = 'pending' AND p.deleted_at IS NULL
+      ORDER BY p.created_at ASC
+      LIMIT ? OFFSET ?
+    `
+
+    const posts = await c.env.DB.prepare(query).bind(size, offset).all()
+
+    // 获取总数
+    const countResult = await c.env.DB.prepare(
+      'SELECT COUNT(*) as total FROM posts WHERE audit_status = ? AND deleted_at IS NULL'
+    ).bind('pending').first()
+    const total = countResult?.total as number || 0
+
+    return c.json({
+      success: true,
+      data: {
+        posts,
+        pagination: {
+          page: pageNum,
+          pageSize: size,
+          total,
+          totalPages: Math.ceil(total / size),
+        },
+      },
+    })
+  } catch (error: any) {
+    logger.error('Failed to fetch pending posts:', error)
+    return c.json({
+      success: false,
+      error: {
+        code: 'INTERNAL_SERVER_ERROR',
+        message: '获取待审核帖子失败',
+      },
+    }, 500)
+  }
+})
+
+// 审核帖子
+app.put('/api/admin/posts/:id/audit', requireModeratorOrAdmin, csrfProtectionMiddleware, async (c) => {
+  try {
+    const { id } = c.req.param()
+    const { status, reason } = await c.req.json()
+    const currentUser = c.get('currentUser')
+
+    if (!['approved', 'rejected'].includes(status)) {
+      return c.json({
+        success: false,
+        error: {
+          code: 'INVALID_STATUS',
+          message: '无效的审核状态',
+        },
+      }, 400)
+    }
+
+    // 检查帖子是否存在
+    const post = await c.env.DB.prepare(
+      'SELECT id, title, author_id, audit_status FROM posts WHERE id = ?'
+    ).bind(id).first()
+
+    if (!post) {
+      return c.json({
+        success: false,
+        error: {
+          code: 'POST_NOT_FOUND',
+          message: '帖子不存在',
+        },
+      }, 404)
+    }
+
+    // 检查帖子是否已经审核
+    if (post.audit_status !== 'pending') {
+      return c.json({
+        success: false,
+        error: {
+          code: 'ALREADY_AUDITED',
+          message: '帖子已经审核',
+        },
+      }, 400)
+    }
+
+    // 更新审核状态
+    await c.env.DB.prepare(
+      'UPDATE posts SET audit_status = ?, audit_reason = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
+    ).bind(status, reason || '', id).run()
+
+    // 记录审核日志
+    await createAuditLog(c, {
+      action: `post.audit.${status}`,
+      entity_type: 'post',
+      entity_id: id,
+      old_values: JSON.stringify({ audit_status: post.audit_status }),
+      new_values: JSON.stringify({ audit_status: status, audit_reason: reason }),
+    })
+
+    // 创建审核日志记录
+    await c.env.DB.prepare(
+      'INSERT INTO audit_logs (id, post_id, user_id, action, old_status, new_status, reason) VALUES (?, ?, ?, ?, ?, ?, ?)'
+    ).bind(
+      generateId(),
+      id,
+      currentUser.id,
+      status === 'approved' ? 'approve' : 'reject',
+      post.audit_status,
+      status,
+      reason || ''
+    ).run()
+
+    return c.json({
+      success: true,
+      message: status === 'approved' ? '帖子已通过审核' : '帖子已拒绝',
+    })
+  } catch (error: any) {
+    logger.error('Failed to audit post:', error)
+    return c.json({
+      success: false,
+      error: {
+        code: 'INTERNAL_SERVER_ERROR',
+        message: '审核帖子失败',
+      },
+    }, 500)
+  }
+})
+
+// 获取帖子审核历史
+app.get('/api/admin/posts/:id/audit-logs', requireModeratorOrAdmin, async (c) => {
+  try {
+    const { id } = c.req.param()
+
+    const logs = await c.env.DB.prepare(`
+      SELECT 
+        al.id, al.post_id, al.user_id, al.action, al.old_status, al.new_status, 
+        al.reason, al.created_at,
+        u.username as reviewer_username
+      FROM audit_logs al
+      LEFT JOIN users u ON al.user_id = u.id
+      WHERE al.post_id = ?
+      ORDER BY al.created_at DESC
+    `).bind(id).all()
+
+    return c.json({
+      success: true,
+      data: logs,
+    })
+  } catch (error: any) {
+    logger.error('Failed to fetch audit logs:', error)
+    return c.json({
+      success: false,
+      error: {
+        code: 'INTERNAL_SERVER_ERROR',
+        message: '获取审核历史失败',
+      },
+    }, 500)
+  }
+})

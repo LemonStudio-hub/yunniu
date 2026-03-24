@@ -27,13 +27,29 @@ export class PostService {
   constructor(private db: D1Database) {}
 
   async create(input: CreatePostInput): Promise<Post> {
+    // 导入敏感词检测服务
+    const { getSensitiveWordService } = await import('./sensitiveWordService')
+    const sensitiveWordService = getSensitiveWordService()
+
+    // 检测标题和内容中的敏感词
+    const titleMatches = sensitiveWordService.detect(input.title)
+    const contentMatches = sensitiveWordService.detect(input.content)
+
+    // 如果发现敏感词，拒绝发布
+    if (titleMatches.length > 0 || contentMatches.length > 0) {
+      const allMatches = [...titleMatches, ...contentMatches]
+      const uniqueWords = [...new Set(allMatches.map(m => m.word))]
+      
+      throw new Error(`帖子包含敏感词，无法发布：${uniqueWords.join(', ')}`)
+    }
+
     const id = generateId()
 
     await this.db
       .prepare(
-        'INSERT INTO posts (id, title, content, author_id, category_id) VALUES (?, ?, ?, ?, ?)'
+        'INSERT INTO posts (id, title, content, author_id, category_id, audit_status) VALUES (?, ?, ?, ?, ?, ?)'
       )
-      .bind(id, input.title, input.content, input.author_id, input.category_id)
+      .bind(id, input.title, input.content, input.author_id, input.category_id, 'pending')
       .run()
 
     if (input.tags && input.tags.length > 0) {
