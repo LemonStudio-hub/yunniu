@@ -217,7 +217,7 @@ onMounted(() => {
             体验 CloudLink 的强大功能，打造属于您的社区
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <CTAButton href="https://forum.winuel.com" size="lg" variant="secondary">
+            <CTAButton href="https://hub.winuel.com" size="lg" variant="secondary">
               访问论坛
             </CTAButton>
             <CTAButton href="https://docs.winuel.com" size="lg" variant="ghost" class="!bg-white/20 !text-white hover:!bg-white/30">

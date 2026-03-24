@@ -53,8 +53,8 @@ const contactInfo = [
   {
     icon: '🌐',
     title: '论坛',
-    value: 'forum.winuel.com',
-    link: 'https://forum.winuel.com'
+    value: 'hub.winuel.com',
+    link: 'https://hub.winuel.com'
   }
 ]
 

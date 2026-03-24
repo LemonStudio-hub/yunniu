@@ -96,7 +96,7 @@ onMounted(() => {
             </p>
             
             <div class="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center px-4">
-              <CTAButton href="https://forum.winuel.com" size="md" variant="primary" class="w-full sm:w-auto">
+              <CTAButton href="https://hub.winuel.com" size="md" variant="primary" class="w-full sm:w-auto">
                 访问论坛
                 <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"/>
@@ -196,7 +196,7 @@ onMounted(() => {
             立即体验 CloudLink 论坛系统，开启您的社区建设之旅
           </p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
-            <CTAButton href="https://forum.winuel.com" size="lg" variant="primary">
+            <CTAButton href="https://hub.winuel.com" size="lg" variant="primary">
               立即体验
             </CTAButton>
             <CTAButton to="/contact" size="lg" variant="secondary">

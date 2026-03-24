@@ -66,7 +66,7 @@ onUnmounted(() => {
             {{ item.name }}
           </RouterLink>
           <a
-            href="https://forum.winuel.com"
+            href="https://hub.winuel.com"
             target="_blank"
             rel="noopener noreferrer"
             class="btn btn-primary text-sm lg:text-base"
@@ -162,7 +162,7 @@ onUnmounted(() => {
           <!-- CTA Button -->
           <div class="mt-8">
             <a
-              href="https://forum.winuel.com"
+              href="https://hub.winuel.com"
               target="_blank"
               rel="noopener noreferrer"
               class="flex items-center justify-center px-6 py-4 rounded-xl bg-gradient-to-r from-primary-500 to-secondary-500 text-white font-medium text-lg hover:shadow-lg transition-shadow"
