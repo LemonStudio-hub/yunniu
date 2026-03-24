@@ -53,6 +53,9 @@ export interface Post {
   isPinned?: boolean
   auditStatus?: AuditStatus
   auditReason?: string
+  appealedBy?: string
+  appealedAt?: string
+  appealReason?: string
   createdAt: string
   updatedAt: string
 }
@@ -64,17 +67,7 @@ export interface PostInput {
   tags?: string[]
 }
 
-export type AuditStatus = 'pending' | 'approved' | 'rejected';
-
-export interface AuditLog {
-  id: string
-  userId: string
-  action: string
-  details?: Record<string, any>
-  ip?: string
-  userAgent?: string
-  createdAt: string
-}
+export type AuditStatus = 'pending' | 'approved' | 'rejected' | 'appealed';
 
 export interface PostUpdate {
   title?: string

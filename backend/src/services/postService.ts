@@ -16,6 +16,12 @@ export interface UpdatePostInput {
   tags?: string[]
 }
 
+export interface AppealPostInput {
+  post_id: string
+  user_id: string
+  reason: string
+}
+
 export interface CreateCommentInput {
   post_id: string
   author_id: string
@@ -35,21 +41,25 @@ export class PostService {
     const titleMatches = sensitiveWordService.detect(input.title)
     const contentMatches = sensitiveWordService.detect(input.content)
 
-    // 如果发现敏感词，拒绝发布
+    const id = generateId()
+    let auditStatus: 'pending' | 'rejected' = 'pending'
+    let auditReason = ''
+
+    // 如果发现敏感词，标记为 rejected，并提供模糊化告警
     if (titleMatches.length > 0 || contentMatches.length > 0) {
       const allMatches = [...titleMatches, ...contentMatches]
       const uniqueWords = [...new Set(allMatches.map(m => m.word))]
+      const filteredWords = uniqueWords.map(word => '*'.repeat(word.length))
       
-      throw new Error(`帖子包含敏感词，无法发布：${uniqueWords.join(', ')}`)
+      auditStatus = 'rejected'
+      auditReason = `帖子包含敏感词：${filteredWords.join(', ')}（实际敏感词：${uniqueWords.join(', ')}）`
     }
-
-    const id = generateId()
 
     await this.db
       .prepare(
-        'INSERT INTO posts (id, title, content, author_id, category_id, audit_status) VALUES (?, ?, ?, ?, ?, ?)'
+        'INSERT INTO posts (id, title, content, author_id, category_id, audit_status, audit_reason) VALUES (?, ?, ?, ?, ?, ?, ?)'
       )
-      .bind(id, input.title, input.content, input.author_id, input.category_id, 'pending')
+      .bind(id, input.title, input.content, input.author_id, input.category_id, auditStatus, auditReason)
       .run()
 
     if (input.tags && input.tags.length > 0) {
@@ -450,6 +460,39 @@ export class PostService {
         await this.db.prepare('INSERT OR IGNORE INTO post_tags (post_id, tag_id) VALUES (?, ?)').bind(postId, tag.id).run()
       }
     }
+  }
+
+  /**
+   * 申诉帖子
+   */
+  async appeal(postId: string, userId: string, reason: string): Promise<Post> {
+    const post = await this.findById(postId)
+    
+    if (!post) {
+      throw new Error('帖子不存在')
+    }
+
+    // 检查是否可以申诉（只有被敏感词检测拒绝的帖子可以申诉）
+    if (post.audit_status !== 'rejected') {
+      throw new Error('该帖子不能申诉')
+    }
+
+    // 检查是否已经申诉过
+    if (post.appealed_by) {
+      throw new Error('该帖子已经申诉过')
+    }
+
+    // 更新帖子状态为申诉中
+    await this.db.prepare(
+      'UPDATE posts SET audit_status = ?, appealed_by = ?, appealed_at = ?, appeal_reason = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
+    ).bind('appealed', userId, new Date().toISOString(), reason, postId).run()
+
+    // 记录审核日志
+    await this.db.prepare(
+      'INSERT INTO audit_logs (id, post_id, user_id, action, old_status, new_status, reason) VALUES (?, ?, ?, ?, ?, ?, ?)'
+    ).bind(generateId(), postId, userId, 'appeal', 'rejected', 'appealed', reason).run()
+
+    return this.findById(postId) as Promise<Post>
   }
 
   private async updatePostTags(postId: string, tagNames: string[]): Promise<void> {

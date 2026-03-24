@@ -5,6 +5,7 @@ import { requireModeratorOrAdmin, Permission } from '../../middleware/permission
 import { csrfProtectionMiddleware } from '../../middleware/csrf'
 import { createAuditLog } from '../../utils/audit'
 import { generateId } from "../../utils/crypto"
+import { PostService } from '../../services/postService'
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>()
 
@@ -349,6 +350,57 @@ app.put('/api/admin/posts/pinned/reorder', requireModeratorOrAdmin, csrfProtecti
 export default app
 
 // ============================================================================
+// 用户申诉功能
+// ============================================================================
+
+// 用户申诉帖子
+app.post('/api/posts/:id/appeal', async (c) => {
+  try {
+    const { id } = c.req.param()
+    const { reason } = await c.req.json()
+    const currentUser = c.get('currentUser')
+
+    if (!currentUser) {
+      return c.json({
+        success: false,
+        error: {
+          code: 'UNAUTHORIZED',
+          message: '需要登录才能申诉',
+        },
+      }, 401)
+    }
+
+    if (!reason || reason.trim().length === 0) {
+      return c.json({
+        success: false,
+        error: {
+          code: 'INVALID_INPUT',
+          message: '申诉理由不能为空',
+        },
+      }, 400)
+    }
+
+    const postService = new PostService(c.env.DB)
+    const post = await postService.appeal(id, currentUser.id, reason.trim())
+
+    return c.json({
+      success: true,
+      message: '申诉已提交，等待管理员审核',
+      data: post,
+    })
+  } catch (error: any) {
+    logger.error('Failed to appeal post:', error)
+    return c.json({
+      success: false,
+      error: {
+        code: 'INTERNAL_SERVER_ERROR',
+        message: error.message || '申诉失败',
+      },
+    }, 500)
+  }
+})
+
+// ============================================================================
 // 审核相关路由
 // ============================================================================
 
@@ -410,7 +462,7 @@ app.get('/api/admin/posts/pending', requireModeratorOrAdmin, async (c) => {
 app.put('/api/admin/posts/:id/audit', requireModeratorOrAdmin, csrfProtectionMiddleware, async (c) => {
   try {
     const { id } = c.req.param()
-    const { status, reason } = await c.req.json()
+    const { status, reason, overrideSensitive } = await c.req.json()
     const currentUser = c.get('currentUser')
 
     if (!['approved', 'rejected'].includes(status)) {
@@ -425,7 +477,7 @@ app.put('/api/admin/posts/:id/audit', requireModeratorOrAdmin, csrfProtectionMid
 
     // 检查帖子是否存在
     const post = await c.env.DB.prepare(
-      'SELECT id, title, author_id, audit_status FROM posts WHERE id = ?'
+      'SELECT id, title, author_id, audit_status, audit_reason FROM posts WHERE id = ?'
     ).bind(id).first()
 
     if (!post) {
@@ -438,29 +490,36 @@ app.put('/api/admin/posts/:id/audit', requireModeratorOrAdmin, csrfProtectionMid
       }, 404)
     }
 
-    // 检查帖子是否已经审核
-    if (post.audit_status !== 'pending') {
+    // 检查帖子是否已经审核（非申诉状态的帖子）
+    if (post.audit_status === 'approved' || post.audit_status === 'rejected') {
+      // 如果不是申诉状态，不允许重复审核
       return c.json({
         success: false,
         error: {
           code: 'ALREADY_AUDITED',
-          message: '帖子已经审核',
+          message: '帖子已经审核，不能重复审核',
         },
       }, 400)
     }
 
+    // 清除敏感词相关的审核理由（管理员可以覆盖敏感词检测）
+    let finalReason = reason || ''
+    if (overrideSensitive && typeof post.audit_reason === 'string' && post.audit_reason.includes('敏感词')) {
+      finalReason = '管理员审核：' + (reason || '管理员批准发布')
+    }
+
     // 更新审核状态
     await c.env.DB.prepare(
-      'UPDATE posts SET audit_status = ?, audit_reason = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
-    ).bind(status, reason || '', id).run()
+      'UPDATE posts SET audit_status = ?, audit_reason = ?, appealed_by = NULL, appealed_at = NULL, appeal_reason = NULL, updated_at = CURRENT_TIMESTAMP WHERE id = ?'
+    ).bind(status, finalReason, id).run()
 
     // 记录审核日志
     await createAuditLog(c, {
       action: `post.audit.${status}`,
       entity_type: 'post',
       entity_id: id,
-      old_values: JSON.stringify({ audit_status: post.audit_status }),
-      new_values: JSON.stringify({ audit_status: status, audit_reason: reason }),
+      old_values: JSON.stringify({ audit_status: post.audit_status, audit_reason: post.audit_reason, appealedBy: post.appealed_by }),
+      new_values: JSON.stringify({ audit_status: status, audit_reason: finalReason, overrideSensitive }),
     })
 
     // 创建审核日志记录
@@ -473,7 +532,7 @@ app.put('/api/admin/posts/:id/audit', requireModeratorOrAdmin, csrfProtectionMid
       status === 'approved' ? 'approve' : 'reject',
       post.audit_status,
       status,
-      reason || ''
+      finalReason
     ).run()
 
     return c.json({

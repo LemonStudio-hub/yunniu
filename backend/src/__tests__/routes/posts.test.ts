@@ -11,7 +11,7 @@ describe('Posts Router', () => {
 
   beforeEach(() => {
     mockDb = createMockD1Database()
-    initJWT('test-secret-key-32-characters-long-key')
+    initJWT('A1b2C3d4!E5f6G7h8@I9j0K1l2#M3n4O5p6')
 
     app = new Hono<{ Bindings: Env; Variables: Variables }>()
     app.use('*', async (c, next) => {

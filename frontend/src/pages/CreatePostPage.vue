@@ -117,6 +117,15 @@
           </router-link>
         </div>
       </form>
+
+      <!-- 申诉对话框 -->
+      <AppealDialog
+        :show="showAppealDialog"
+        :post-title="title"
+        :audit-reason="currentPostAuditReason"
+        @close="showAppealDialog = false"
+        @submit="handleAppealSubmit"
+      />
     </div>
   </div>
 </template>
@@ -127,6 +136,7 @@ import { useRouter } from 'vue-router'
 import { useUIStore } from '../stores/ui'
 import { apiClient } from '../api/client'
 import CodeUploader from '../components/CodeUploader.vue'
+import AppealDialog from '../components/AppealDialog.vue'
 import type { CodeAttachment } from '../types/code'
 
 const router = useRouter()
@@ -139,6 +149,12 @@ const tagsInput = ref('')
 const loading = ref(false)
 const postId = ref('')
 const codeAttachments = ref<CodeAttachment[]>([])
+
+// 申诉对话框相关状态
+const showAppealDialog = ref(false)
+const currentPostAuditReason = ref('')
+const appealingPostId = ref('')
+const appealLoading = ref(false)
 
 const categories = ref([
   { id: '1', name: '技术讨论' },
@@ -160,17 +176,33 @@ async function handleSubmit() {
       content: content.value,
       categoryId: categoryId.value,
       tags,
-    }) as { id: string }
+    }) as { 
+      id: string
+      auditStatus?: string
+      auditReason?: string
+    }
     
     postId.value = post.id
     
-    uiStore.addNotification({
-      type: 'success',
-      title: '发布成功',
-      message: '帖子已成功发布',
-    })
-    
-    router.push(`/post/${post.id}`)
+    // 检查是否被拒绝（包含敏感词）
+    if (post.auditStatus === 'rejected' && post.auditReason?.includes('敏感词')) {
+      // 显示申诉对话框
+      currentPostAuditReason.value = post.auditReason
+      appealingPostId.value = post.id
+      showAppealDialog.value = true
+      uiStore.addNotification({
+        type: 'warning',
+        title: '帖子被标记为敏感内容',
+        message: '您的帖子包含敏感词，可以选择申诉或等待管理员审核',
+      })
+    } else {
+      uiStore.addNotification({
+        type: 'success',
+        title: '发布成功',
+        message: '帖子已成功发布',
+      })
+      router.push(`/post/${post.id}`)
+    }
   } catch (error: any) {
     uiStore.addNotification({
       type: 'error',
@@ -179,6 +211,31 @@ async function handleSubmit() {
     })
   } finally {
     loading.value = false
+  }
+}
+
+const handleAppealSubmit = async (reason: string) => {
+  appealLoading.value = true
+  try {
+    await apiClient.post(`/api/posts/${appealingPostId.value}/appeal`, {
+      reason,
+    })
+    
+    uiStore.addNotification({
+      type: 'success',
+      title: '申诉已提交',
+      message: '您的申诉已提交，管理员将会尽快处理',
+    })
+    
+    router.push(`/post/${appealingPostId.value}`)
+  } catch (error: any) {
+    uiStore.addNotification({
+      type: 'error',
+      title: '申诉失败',
+      message: error?.message || '申诉失败，请稍后重试',
+    })
+  } finally {
+    appealLoading.value = false
   }
 }
 
