@@ -3,6 +3,7 @@ import type { Env, Variables } from './types'
 import { initJWT } from './utils/jwt'
 import { logger } from './utils/logger'
 import { initEmailChecker } from './utils/validation'
+import { EmailService } from './services/emailService'
 import { corsMiddleware } from './middleware/cors'
 import { httpsRedirect, hsts } from './middleware/https'
 import { auditLog } from './middleware/audit'
@@ -39,7 +40,7 @@ initEmailChecker(
 
 const app = new Hono<{ Bindings: Env; Variables: Variables }>()
 
-// Set global environment and initialize JWT
+// Set global environment and initialize JWT and email service
 app.use('*', async (c, next) => {
   if (c.env.ENVIRONMENT) {
     ;(globalThis as any).ENVIRONMENT = c.env.ENVIRONMENT
@@ -56,6 +57,23 @@ app.use('*', async (c, next) => {
       // 不抛出错误，允许请求继续进行
     }
   }
+  
+  // 初始化邮件服务
+  if (c.env.RESEND_API_KEY && !(globalThis as any).EMAIL_SERVICE_INITIALIZED) {
+    try {
+      const emailService = new EmailService(
+        c.env.RESEND_API_KEY,
+        c.env.RESEND_FROM_EMAIL || 'noreply@mail.winuel.com',
+        c.env.RESEND_FROM_NAME || '云纽论坛'
+      )
+      ;(globalThis as any).emailService = emailService
+      ;(globalThis as any).EMAIL_SERVICE_INITIALIZED = true
+      console.log('Email service initialized')
+    } catch (error) {
+      console.error('Failed to initialize email service:', error)
+    }
+  }
+  
   await next()
 })
 

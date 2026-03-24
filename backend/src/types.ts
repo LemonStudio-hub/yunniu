@@ -7,6 +7,9 @@ export type Env = {
   KV: KVNamespace
   JWT_SECRET?: string
   ENVIRONMENT?: string
+  RESEND_API_KEY?: string
+  RESEND_FROM_EMAIL?: string
+  RESEND_FROM_NAME?: string
 }
 
 export type Bindings = Env
