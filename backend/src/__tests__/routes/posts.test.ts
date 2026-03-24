@@ -32,14 +32,19 @@ describe('Posts Router', () => {
         },
       } as KVNamespace
       
-      // Set up dependency injection container
-      const container = new Map()
-      const postService = new PostService(mockDb)
-      container.set(DEPENDENCY_TOKENS.POST_SERVICE, postService)
-      c.set('container', container)
-      
       await next()
     })
+    
+    // Set up dependency injection container after middleware
+    app.use('*', async (c, next) => {
+      // Set up dependency injection container for each request
+      const container = new Map()
+      const postService = new PostService(c.env.DB)
+      container.set(DEPENDENCY_TOKENS.POST_SERVICE, postService)
+      c.set('container', container)
+      await next()
+    })
+    
     app.route('/api/posts', postsRouter)
   })
 
