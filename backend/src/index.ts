@@ -74,6 +74,18 @@ app.use('*', async (c, next) => {
     }
   }
   
+  // 初始化数据库（仅在首次请求时）
+  if (c.env.DB && !(globalThis as any).DB_INITIALIZED) {
+    try {
+      const { initializeDatabase } = await import('./utils/dbInitializer')
+      await initializeDatabase(c.env.DB)
+      ;(globalThis as any).DB_INITIALIZED = true
+    } catch (error) {
+      console.error('Failed to initialize database:', error)
+      // 不抛出错误，允许请求继续进行
+    }
+  }
+  
   await next()
 })
 
@@ -95,6 +107,24 @@ app.get('/', (c) => {
 
 app.get('/health', (c) => {
   return c.json({ status: 'ok' })
+})
+
+// 数据库初始化端点（仅用于首次部署）
+app.post('/api/admin/init-db', async (c) => {
+  try {
+    const { initializeDatabase } = await import('./utils/dbInitializer')
+    await initializeDatabase(c.env.DB)
+    return c.json({ 
+      success: true, 
+      message: '数据库初始化成功' 
+    })
+  } catch (error: any) {
+    console.error('数据库初始化失败:', error)
+    return c.json({ 
+      success: false, 
+      error: error.message || '数据库初始化失败' 
+    }, 500)
+  }
 })
 
 app.route('/api/auth', authRouter)
