@@ -2,8 +2,11 @@ import { describe, it, expect, beforeEach } from 'vitest'
 import { Hono } from 'hono'
 import postsRouter from '../../routes/posts'
 import { createMockD1Database } from '../helpers/db'
-import { initJWT, generateToken } from '../../utils/jwt'
+import { initJWT, generateToken, Audience } from '../../utils/jwt'
 import type { Env, Variables } from '../../types'
+import { PostService } from '../../services/postService'
+import { DEPENDENCY_TOKENS } from '../../utils/di'
+import { csrfStore, createCSRFHeaders } from '../helpers/test-utils'
 
 describe('Posts Router', () => {
   let app: Hono<{ Bindings: Env; Variables: Variables }>
@@ -11,6 +14,7 @@ describe('Posts Router', () => {
 
   beforeEach(() => {
     mockDb = createMockD1Database()
+    csrfStore.clear()
     initJWT('A1b2C3d4!E5f6G7h8@I9j0K1l2#M3n4O5p6')
 
     app = new Hono<{ Bindings: Env; Variables: Variables }>()
@@ -20,18 +24,27 @@ describe('Posts Router', () => {
       }
       c.env.DB = mockDb
       c.env.JWT_SECRET = 'test-secret-key-32-characters-long-key'
-      // Mock KV storage
+      // Mock KV storage with CSRF support
       c.env.KV = {
-        get: async (key: string | string[]) => null,
-        put: async (key: string, value: string, options?: any) => {},
+        get: async (key: string) => csrfStore.get(key) || null,
+        put: async (key: string, value: string, options?: any) => {
+          csrfStore.put(key, value)
+        },
       } as KVNamespace
+      
+      // Set up dependency injection container
+      const container = new Map()
+      const postService = new PostService(mockDb)
+      container.set(DEPENDENCY_TOKENS.POST_SERVICE, postService)
+      c.set('container', container)
+      
       await next()
     })
     app.route('/api/posts', postsRouter)
   })
 
   const createAuthHeader = async (userId: string, username: string = 'testuser', role: string = 'user') => {
-    const token = await generateToken({ userId, username, role })
+    const token = await generateToken({ userId, username, role }, Audience.USER)
     return {
       'Authorization': `Bearer ${token}`,
     }
@@ -227,11 +240,13 @@ describe('Posts Router', () => {
       mockDb.tables.set('post_tags', [])
 
       const authHeader = await createAuthHeader('1')
+      const csrfHeaders = createCSRFHeaders()
       const res = await app.request('/api/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           ...authHeader,
+          ...csrfHeaders,
         },
         body: JSON.stringify(postData),
       })
@@ -247,11 +262,13 @@ describe('Posts Router', () => {
       }
 
       const authHeader = await createAuthHeader('1')
+      const csrfHeaders = createCSRFHeaders()
       const res = await app.request('/api/posts', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           ...authHeader,
+          ...csrfHeaders,
         },
         body: JSON.stringify(postData),
       })
@@ -287,11 +304,13 @@ describe('Posts Router', () => {
       }
 
       const authHeader = await createAuthHeader('1')
+      const csrfHeaders = createCSRFHeaders()
       const res = await app.request('/api/posts/1', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           ...authHeader,
+          ...csrfHeaders,
         },
         body: JSON.stringify(updateData),
       })
@@ -312,11 +331,13 @@ describe('Posts Router', () => {
       }
 
       const authHeader = await createAuthHeader('1')
+      const csrfHeaders = createCSRFHeaders()
       const res = await app.request('/api/posts/999', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           ...authHeader,
+          ...csrfHeaders,
         },
         body: JSON.stringify(updateData),
       })
@@ -350,11 +371,13 @@ describe('Posts Router', () => {
       }
 
       const authHeader = await createAuthHeader('1')
+      const csrfHeaders = createCSRFHeaders()
       const res = await app.request('/api/posts/1', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           ...authHeader,
+          ...csrfHeaders,
         },
         body: JSON.stringify(updateData),
       })
@@ -384,9 +407,13 @@ describe('Posts Router', () => {
       mockDb.tables.set('posts', [mockPost])
 
       const authHeader = await createAuthHeader('1')
+      const csrfHeaders = createCSRFHeaders()
       const res = await app.request('/api/posts/1', {
         method: 'DELETE',
-        headers: authHeader,
+        headers: {
+          ...authHeader,
+          ...csrfHeaders,
+        },
       })
 
       expect(res.status).toBe(200)
@@ -399,9 +426,13 @@ describe('Posts Router', () => {
       mockDb.tables.set('posts', [])
 
       const authHeader = await createAuthHeader('1')
+      const csrfHeaders = createCSRFHeaders()
       const res = await app.request('/api/posts/999', {
         method: 'DELETE',
-        headers: authHeader,
+        headers: {
+          ...authHeader,
+          ...csrfHeaders,
+        },
       })
 
       expect(res.status).toBe(404)
@@ -427,9 +458,13 @@ describe('Posts Router', () => {
       mockDb.tables.set('posts', [mockPost])
 
       const authHeader = await createAuthHeader('1')
+      const csrfHeaders = createCSRFHeaders()
       const res = await app.request('/api/posts/1', {
         method: 'DELETE',
-        headers: authHeader,
+        headers: {
+          ...authHeader,
+          ...csrfHeaders,
+        },
       })
 
       expect(res.status).toBe(403)
@@ -465,9 +500,13 @@ describe('Posts Router', () => {
       mockDb.tables.set('notifications', [])
 
       const authHeader = await createAuthHeader('1')
+      const csrfHeaders = createCSRFHeaders()
       const res = await app.request('/api/posts/1/like', {
         method: 'POST',
-        headers: authHeader,
+        headers: {
+          ...authHeader,
+          ...csrfHeaders,
+        },
       })
 
       expect(res.status).toBe(200)
@@ -501,9 +540,13 @@ describe('Posts Router', () => {
       mockDb.tables.set('likes', [mockLike])
 
       const authHeader = await createAuthHeader('1')
+      const csrfHeaders = createCSRFHeaders()
       const res = await app.request('/api/posts/1/like', {
         method: 'POST',
-        headers: authHeader,
+        headers: {
+          ...authHeader,
+          ...csrfHeaders,
+        },
       })
 
       expect(res.status).toBe(400)
@@ -525,9 +568,13 @@ describe('Posts Router', () => {
       mockDb.tables.set('likes', [mockLike])
 
       const authHeader = await createAuthHeader('1')
+      const csrfHeaders = createCSRFHeaders()
       const res = await app.request('/api/posts/1/like', {
         method: 'DELETE',
-        headers: authHeader,
+        headers: {
+          ...authHeader,
+          ...csrfHeaders,
+        },
       })
 
       expect(res.status).toBe(200)

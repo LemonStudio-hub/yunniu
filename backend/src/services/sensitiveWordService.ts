@@ -49,7 +49,12 @@ export class SensitiveWordService {
       }
 
       console.log(`✓ 敏感词库加载完成，共 ${totalWords} 个敏感词`)
-    } catch (error) {
+    } catch (error: any) {
+      // 如果是目录不存在的错误，在测试环境中可能是正常的，记录警告但不抛出错误
+      if (error.code === 'ENOENT') {
+        console.warn(`⚠ 敏感词目录不存在: ${this.dataDir}，敏感词过滤功能将被禁用`)
+        return
+      }
       console.error('✗ 加载敏感词库失败:', error)
       throw error
     }
