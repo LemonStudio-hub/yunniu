@@ -41,11 +41,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Build shared packages
+        run: pnpm build:shared
+
       - name: Type check backend
         run: cd backend && pnpm type-check
 
       - name: Type check frontend
-        run: cd frontend && pnpm run build --dryRun || cd frontend && vue-tsc -b --noEmit
+        run: cd frontend && vue-tsc -b --noEmit
 
   test:
     name: Test
@@ -80,6 +83,14 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Build shared packages
+        run: pnpm build:shared
+
+      - name: Create test data directories
+        run: |
+          mkdir -p backend/data/sensitive-words
+          mkdir -p backend/data/blocklist
 
       - name: Test backend
         run: cd backend && pnpm test:run
