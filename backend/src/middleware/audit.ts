@@ -38,21 +38,26 @@ export const auditLog: MiddlewareHandler<{ Bindings: Env; Variables: Variables }
 
     // 只记录写操作（POST, PUT, DELETE）
     if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
-      await auditService.create({
-        user_id: userId,
-        action: `${method} ${path}`,
-        entity_type: 'api_request',
-        entity_id: c.req.path,
-        new_values: {
-          method,
-          path,
-          statusCode: c.res.status,
-          duration,
-        },
-        ip_address: ipAddress,
-        user_agent: userAgent,
-        status: 'success',
-      })
+      try {
+        await auditService.create({
+          user_id: userId,
+          action: `${method} ${path}`,
+          entity_type: 'api_request',
+          entity_id: c.req.path,
+          new_values: {
+            method,
+            path,
+            statusCode: c.res.status,
+            duration,
+          },
+          ip_address: ipAddress,
+          user_agent: userAgent,
+          status: 'success',
+        })
+      } catch (auditError) {
+        // 审计日志失败不应该影响 API 响应
+        console.error('Failed to create audit log:', auditError)
+      }
     }
   } catch (error) {
     // 记录失败的请求
@@ -72,10 +77,11 @@ export const auditLog: MiddlewareHandler<{ Bindings: Env; Variables: Variables }
         error_message: error instanceof Error ? error.message : 'Unknown error',
       })
     } catch (auditError) {
-      // 如果审计日志记录失败，只记录到控制台，不影响主流程
-      console.error('Failed to log audit:', auditError)
+      // 审计日志失败不应该影响 API 响应
+      console.error('Failed to create audit log for error:', auditError)
     }
-
+    
+    // 重新抛出错误以便全局错误处理器处理
     throw error
   }
 }

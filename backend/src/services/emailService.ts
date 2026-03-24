@@ -55,25 +55,27 @@ export class EmailService {
       const html = generateVerificationEmailTemplate(code, appName)
       const from = `${this.fromName} <${this.fromEmail}>`
 
-      const { data, error } = await this.resend!.emails.send({
+      const result = await this.resend!.emails.send({
         from,
         to,
         subject: '邮箱验证码',
         html
       })
 
-      if (error) {
-        console.error('Failed to send verification email:', error)
+      // 处理 Resend API 响应
+      if (result.error) {
+        console.error('Failed to send verification email:', result.error)
         return {
           success: false,
-          error: error.message || '发送失败'
+          error: result.error.message || '发送失败'
         }
       }
 
-      console.log(`Verification email sent to ${to}, message ID: ${data?.id}`)
+      // 成功发送
+      console.log(`Verification email sent to ${to}, message ID: ${result.data?.id}`)
       return {
         success: true,
-        messageId: data?.id
+        messageId: result.data?.id
       }
     } catch (error: any) {
       console.error('Error sending verification email:', error)
