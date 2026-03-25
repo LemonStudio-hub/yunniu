@@ -7,6 +7,7 @@ import { strictAuthRateLimit } from '../../middleware/rateLimit'
 import { authMiddleware } from '../../middleware/auth'
 import { hashPassword } from '../../utils/crypto'
 import { initEmailChecker } from '../../utils/validation'
+import { setupMockEmailService } from '../helpers/emailServiceMock'
 import { csrfStore, createCSRFHeaders } from '../helpers/test-utils'
 import type { Env, Variables } from '../../types'
 
@@ -21,12 +22,8 @@ describe('Auth Router', () => {
     testPasswordHash = await hashPassword('Password123!')
     // Initialize disposable email checker with test blocklist
     initEmailChecker(['tempmail.com'], [])
-    // Mock email service for tests
-    ;(globalThis as any).emailService = {
-      isAvailable: () => true,
-      sendVerificationCode: async () => { return true },
-      verifyCode: async () => { return true }
-    }
+    setupMockEmailService()
+    // Clear CSRF store before each test
     csrfStore.clear()
 
     app = new Hono<{ Bindings: Env; Variables: Variables }>()
