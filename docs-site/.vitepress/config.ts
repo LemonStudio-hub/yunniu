@@ -20,6 +20,9 @@ export default defineConfig({
     
     siteTitle: 'CloudLink',
     
+    // 外观选项 - 启用暗黑模式
+    appearance: 'dark',
+    
     nav: [
       { text: '指南', link: '/guide/quick-start' },
       { text: 'API', link: '/api/overview' },
