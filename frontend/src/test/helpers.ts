@@ -4,8 +4,8 @@
  */
 
 import { getApiClient } from '@cloudlink/shared-api'
-import type { Post, Comment } from '../../stores/post'
-import type { User } from '../../stores/user'
+import type { Post, Comment } from '../stores/post'
+import type { User } from '../stores/user'
 import { expect } from 'vitest'
 
 // 获取ApiClient实例
