@@ -7,6 +7,7 @@ import { strictAuthRateLimit } from '../../middleware/rateLimit'
 import { authMiddleware } from '../../middleware/auth'
 import { hashPassword } from '../../utils/crypto'
 import { initEmailChecker } from '../../utils/validation'
+import { csrfStore, createCSRFHeaders } from '../helpers/test-utils'
 import type { Env, Variables } from '../../types'
 
 describe('Auth Router', () => {
@@ -24,6 +25,8 @@ describe('Auth Router', () => {
     ;(globalThis as any).emailService = {
       isAvailable: () => false
     }
+    // Clear CSRF store before each test
+    csrfStore.clear()
 
     app = new Hono<{ Bindings: Env; Variables: Variables }>()
     app.use('*', async (c, next) => {
@@ -32,10 +35,14 @@ describe('Auth Router', () => {
       }
       c.env.DB = mockDb
       c.env.JWT_SECRET = 'test-secret-key-32-characters-long-key'
-      // Mock KV storage
+      // Mock KV storage with CSRF support
       c.env.KV = {
-        get: async (key: string) => null,
-        put: async (key: string, value: string, options?: any) => {},
+        get: async (key: string) => csrfStore.get(key) || null,
+        put: async (key: string, value: string, options?: any) => {
+          if (options?.metadata) {
+            csrfStore.put(key, value)
+          }
+        },
       } as KVNamespace
       await next()
     })
@@ -356,16 +363,27 @@ describe('Auth Router', () => {
         }
         c.env.DB = mockDb
         c.env.JWT_SECRET = 'test-secret-key-32-characters-long-key'
+        // Mock KV storage with CSRF support
+        c.env.KV = {
+          get: async (key: string) => csrfStore.get(key) || null,
+          put: async (key: string, value: string, options?: any) => {
+            if (options?.metadata) {
+              csrfStore.put(key, value)
+            }
+          },
+        } as KVNamespace
         await next()
       })
       appWithAuth.route('/api/auth', authRouter)
 
       const token = await import('../../utils/jwt').then(m => m.generateToken({ userId: '1', username: 'testuser', role: 'user' }))
+      const csrfHeaders = createCSRFHeaders('test-logout-session')
 
       const res = await appWithAuth.request('/api/auth/logout', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
+          ...csrfHeaders,
         },
       })
 
