@@ -21,11 +21,12 @@ describe('Auth Router', () => {
     testPasswordHash = await hashPassword('Password123!')
     // Initialize disposable email checker with test blocklist
     initEmailChecker(['tempmail.com'], [])
-    // Mock email service to be unavailable in tests
+    // Mock email service for tests
     ;(globalThis as any).emailService = {
-      isAvailable: () => false
+      isAvailable: () => true,
+      sendVerificationCode: async () => { return true },
+      verifyCode: async () => { return true }
     }
-    // Clear CSRF store before each test
     csrfStore.clear()
 
     app = new Hono<{ Bindings: Env; Variables: Variables }>()
