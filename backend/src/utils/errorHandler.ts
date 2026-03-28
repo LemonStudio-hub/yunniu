@@ -56,19 +56,19 @@ const ERROR_CODES = {
 
 // 错误消息映射（不包含敏感信息）/ Error message mapping (no sensitive information)
 const ERROR_MESSAGES: Record<string, string> = {
-  [ERROR_CODES.UNAUTHORIZED]: '未授权访问 / Unauthorized access',
-  [ERROR_CODES.INVALID_TOKEN]: '无效的令牌 / Invalid token',
-  [ERROR_CODES.TOKEN_EXPIRED]: '令牌已过期 / Token expired',
-  [ERROR_CODES.VALIDATION_ERROR]: '输入验证失败 / Input validation failed',
-  [ERROR_CODES.INVALID_INPUT]: '无效的输入 / Invalid input',
-  [ERROR_CODES.MISSING_FIELD]: '缺少必要字段 / Missing required field',
-  [ERROR_CODES.NOT_FOUND]: '资源不存在 / Resource not found',
-  [ERROR_CODES.ALREADY_EXISTS]: '资源已存在 / Resource already exists',
-  [ERROR_CODES.FORBIDDEN]: '权限不足 / Insufficient permissions',
-  [ERROR_CODES.RATE_LIMIT_EXCEEDED]: '请求过于频繁 / Too many requests',
-  [ERROR_CODES.INTERNAL_ERROR]: '服务器内部错误 / Internal server error',
-  [ERROR_CODES.SERVICE_UNAVAILABLE]: '服务暂时不可用 / Service temporarily unavailable',
-  [ERROR_CODES.DATABASE_ERROR]: '数据库操作失败 / Database operation failed',
+  [ERROR_CODES.UNAUTHORIZED]: '未授权访问',
+  [ERROR_CODES.INVALID_TOKEN]: '无效的令牌',
+  [ERROR_CODES.TOKEN_EXPIRED]: '令牌已过期',
+  [ERROR_CODES.VALIDATION_ERROR]: '输入验证失败',
+  [ERROR_CODES.INVALID_INPUT]: '无效的输入',
+  [ERROR_CODES.MISSING_FIELD]: '缺少必要字段',
+  [ERROR_CODES.NOT_FOUND]: '资源不存在',
+  [ERROR_CODES.ALREADY_EXISTS]: '资源已存在',
+  [ERROR_CODES.FORBIDDEN]: '权限不足',
+  [ERROR_CODES.RATE_LIMIT_EXCEEDED]: '请求过于频繁',
+  [ERROR_CODES.INTERNAL_ERROR]: '服务器内部错误',
+  [ERROR_CODES.SERVICE_UNAVAILABLE]: '服务暂时不可用',
+  [ERROR_CODES.DATABASE_ERROR]: '数据库操作失败',
 }
 
 /**
@@ -95,7 +95,7 @@ export class AppError extends Error {
    * @param details - 错误详情 / Error details
    */
   constructor(code: string, statusCode: number = 500, details?: string) {
-    super(ERROR_MESSAGES[code] || '未知错误 / Unknown error')
+    super(ERROR_MESSAGES[code] || '未知错误')
     this.code = code
     this.statusCode = statusCode
     this.details = details
