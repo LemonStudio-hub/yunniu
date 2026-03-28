@@ -240,7 +240,7 @@ async function handleSendCode() {
       type: 'register',
     })
 
-    if (response.success) {
+    if (response && response.success) {
       uiStore.addNotification({
         type: 'success',
         title: '验证码已发送',
@@ -260,7 +260,7 @@ async function handleSendCode() {
       uiStore.addNotification({
         type: 'error',
         title: '发送失败',
-        message: response.error?.details || response.error?.message || '发送验证码失败，请稍后重试',
+        message: response?.error?.details || response?.error?.message || '发送验证码失败，请稍后重试',
       })
     }
   } catch (error: any) {
@@ -314,19 +314,28 @@ async function handleSubmit() {
       password: password.value,
       verificationCode: verificationCode.value,
     }) as any
-    userStore.setUser(data.user)
-    userStore.setToken(data.token)
-    uiStore.addNotification({
-      type: 'success',
-      title: '注册成功',
-      message: `欢迎加入云纽，${data.user.username}！`,
-    })
-    router.push('/')
+    
+    if (data && data.user && data.token) {
+      userStore.setUser(data.user)
+      userStore.setToken(data.token)
+      uiStore.addNotification({
+        type: 'success',
+        title: '注册成功',
+        message: `欢迎加入云纽，${data.user.username}！`,
+      })
+      router.push('/')
+    } else {
+      uiStore.addNotification({
+        type: 'error',
+        title: '注册失败',
+        message: '服务器响应格式错误，请稍后重试',
+      })
+    }
   } catch (error: any) {
     uiStore.addNotification({
       type: 'error',
       title: '注册失败',
-      message: error?.error?.details || error?.error?.message || error?.message || '注册失败，请稍后重试',
+      message: error?.details || error?.message || '注册失败，请稍后重试',
     })
   } finally {
     loading.value = false
