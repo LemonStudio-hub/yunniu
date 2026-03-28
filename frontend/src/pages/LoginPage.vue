@@ -8,7 +8,7 @@
         <div class="relative">
           <div class="text-center mb-8">
             <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-600 rounded-2xl shadow-xl shadow-primary-500/30 mb-4 hover:scale-110 hover:rotate-6 transition-all duration-400 group">
-              <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-2xl"></div>
+              <div class="absolute inset-0 bg-gradient-to-br from-white/20 dark:from-gray-700/20 to-transparent rounded-2xl"></div>
               <svg class="w-8 h-8 text-white relative z-10 group-hover:animate-pulse-slow" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>

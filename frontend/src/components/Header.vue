@@ -26,7 +26,7 @@
           class="flex items-center gap-3 group"
         >
           <div class="relative w-10 h-10 bg-gradient-to-br from-primary-500 via-primary-600 to-secondary-600 rounded-xl flex items-center justify-center shadow-lg shadow-primary-500/30 group-hover:shadow-xl group-hover:shadow-primary-500/50 transition-all duration-400 group-hover:scale-110 group-hover:rotate-3">
-            <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent rounded-xl"></div>
+            <div class="absolute inset-0 bg-gradient-to-br from-white/20 dark:from-gray-700/20 to-transparent rounded-xl"></div>
             <svg
               class="w-6 h-6 text-white relative z-10"
               fill="none"
